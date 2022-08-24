@@ -112,7 +112,7 @@ hr {
 
 footer {
     margin-top: 70px;
-    border-top: 1px solid black;
+    border-top: 1px solid #333;
 }
 
 footer > p {
@@ -127,4 +127,25 @@ footer ul {
 footer li {
     display: inline-block;
     padding: 8px;
+}
+
+
+/* dark theme */
+@media (prefers-color-scheme: dark) {
+    body {
+        color: #ffffea;
+        background-color: #383838;
+    }
+
+    a {
+        color: #8e8eff;
+    }
+
+    header.mail-header {
+        background-color: #390039;
+    }
+
+    footer {
+        border-color: #ffffea;
+    }
 }
