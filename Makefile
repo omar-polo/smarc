@@ -3,12 +3,15 @@ MBLAZE_PAGER =	cat
 MDIR =		${HOME}/Maildir/op/GoT
 OUTDIR =	www
 
-.PHONY: all dirs assets clean
+.PHONY: all gzip dirs assets clean
 
 all: .mblaze dirs assets
 	mlist '${MDIR}' | mthread -r | \
 		${ENV} mscan -f '%R %I %i %16D <%64f> %128S' | \
 		${ENV} ./mexp | ${ENV} ./mkindex > ${OUTDIR}/index.html
+
+gzip:
+	gzip -kr ${OUTDIR}/
 
 dirs:
 	mkdir -p ${OUTDIR}/mbox/
