@@ -5,6 +5,5 @@ path="$(cd $OUTDIR && mktemp parts/$MESSAGE_ID.XXXXXXXXXX)"
 # save the input
 cat > "$OUTDIR/$path"
 
-ftype="$(file "$OUTDIR/$path")"
-echo "<li><a href='/$path'>${ftype#*:}</a></li>" >> parts.html
+echo "<li><a href='/$path'>$(file -b "$OUTDIR/$path")</a></li>" >> parts.html
 exit 0
