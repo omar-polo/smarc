@@ -40,3 +40,10 @@ For use with httpd' `gzip-static' (or similar)
 
 will recursively compress every file in OUTDIR, leaving the original
 file intact.
+
+
+License
+-------
+
+As far as I'm concerned, gotmarc (i.e. all the code in this
+repository) is in the public domain.
