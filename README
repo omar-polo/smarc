@@ -14,14 +14,15 @@ The dependencies are:
 How it works
 ------------
 
-The makefile use mlist(1) to gather all the mail of the mailing list,
-mthread(1) to arrange them in threads and mscan(1) to parse them.
+The makefile uses mlist(1) to gather all the mail of the mailing list,
+mthread(1) for threading and mscan(1) for parsing.
 
 Then, two custom scripts are called in the same pipeline:
 
  - mexp: creates a separate HTML page for each mail, as well as the
-   raw message/body parts and the attachments.  it's the heaviest part
-   of the pipeline.
+   raw message/body parts and the attachments.  It's the heaviest part
+   of the pipeline.  If a message appears to have already been exported,
+   it will be skipped to save some time.
 
  - mkindex: generates the index and threads page.
 
