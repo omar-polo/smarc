@@ -73,7 +73,7 @@ while (<>) {
 	print $fh "<header class='mail-header'>";
 	print $fh "<p>";
 	print $fh $logo;
-	print $fh "<a href='/'>‹ Back to the index</a>";
+	print $fh "<a href='/'>← Back to the index</a>";
 	print $fh " or ";
 	print $fh "<a href='/thread/$tid.html#$mid'>→ go to the thread</a>.";
 	print $fh "</p>";
