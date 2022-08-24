@@ -11,8 +11,9 @@ all: .mblaze dirs assets
 		${ENV} ./mexp | ${ENV} ./mkindex > ${OUTDIR}/index.html
 
 dirs:
-	mkdir -p ${OUTDIR}/thread/
 	mkdir -p ${OUTDIR}/mbox/
+	mkdir -p ${OUTDIR}/parts/
+	mkdir -p ${OUTDIR}/thread/
 
 assets: dirs got.png style.css
 	cp got.png ${OUTDIR}/got@2x.png

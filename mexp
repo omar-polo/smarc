@@ -87,6 +87,11 @@ while (<>) {
 
 	say $fh $hdr =~ s/TITLE/$subj/r;
 
+	# prepare the parts listing file
+	$ENV{'MESSAGE_ID'} = $mid;
+	open(my $parts, '+>', "parts.html")
+	    or die "can't create parts.html: $!";
+
 	open(my $mshow, "-|", "mshow", "-nNA", "text/plain", $fname)
 	    or die "can't exec mshow: $!";
 
@@ -124,10 +129,24 @@ while (<>) {
 	print $fh san($body // "");
 	print $fh "</pre>";
 
+	# generate the listing for the exported parts
+	my $part_seen = 0;
+	while (<$parts>) {
+		if (!$part_seen) {
+			$part_seen = 1;
+			say $fh "<ul class='parts'>";
+		}
+		print $fh $_;
+	}
+	say $fh "</ul>" if $part_seen;
+
 	print $fh $foot;
 
 	close($mshow);
+	close($parts);
 	close($fh);
 
 	# exit(0);
 }
+
+unlink "parts.html";
