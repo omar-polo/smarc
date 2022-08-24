@@ -11,6 +11,8 @@ die 'Set $OUTDIR' unless defined $outdir;
 mkdir $outdir;
 
 my $tfh;
+my $threads_seen = 0;
+my $last_level = 0;
 
 my $logo = <<EOF;
 <img srcset='/got-tiny.png, /got-tiny@2x.png 2x'
@@ -55,23 +57,39 @@ sub nextthread {
 	print $tfh $logo;
 	print $tfh "<a href='/'>‹ Back to the index</a>";
 	print $tfh "</p>";
-	print $tfh "<dl><dt>Thread:</dt><dd>$subj</dd>";
+	print $tfh "<dl><dt>Thread:</dt><dd>$subj</dd></dl>";
 	print $tfh "</header>\n";
-	print $tfh "<div class='thread'>\n";
+	# print $tfh "<div class='thread'><ul class='mails'>\n";
 }
 
 sub endthread {
-	print $tfh "</div>\n";
+	say $tfh "</ul></li>" x $last_level;
+	say $tfh "</ul></div>\n";
 	endpage($tfh);
 	close($tfh);
+
+	$last_level = 0;
 }
 
 sub entry_raw {
-	my ($fh, $mid, $level, $date, $from, $subj) = @_;
+	my ($fh, $sep, $mid, $level, $date, $from, $subj) = @_;
+	my $new_thread = $level == 0;
 
-	my $class = "";
-	$class = "reply indent-$level" unless $level == 0;
-	print $fh "<div id='$mid' class='mail $class'>";
+	say $fh "</ul>\n</li>" x ($last_level - $level) if $last_level > $level;
+	say $fh "</ul>\n</div>$sep" if $threads_seen && $new_thread;
+
+	if ($new_thread) {
+		nextthread($mid, $subj);
+		say $fh "<div class='thread'>";
+	}
+
+	if ($last_level < $level) {
+		say $fh "<li>\n<ul>";
+	} elsif ($last_level == 0) {
+		say $fh "<ul class='mails'>";
+	}
+
+	print $fh "<li id='$mid' class='mail'>";
 	print $fh "<p class='mail-meta'>";
 	print $fh "<time>$date</time> ";
 	print $fh "<span class='from'>$from</span>";
@@ -83,12 +101,12 @@ sub entry_raw {
 	print $fh "<p class='subject'>";
 	print $fh "<a href='/$mid.html'>$subj</a>";
 	print $fh "</p>";
-	print $fh "</div>\n";
+	print $fh "</li>\n";
 }
 
 sub entry {
-	entry_raw(\*STDOUT, @_);
-	entry_raw($tfh, @_);
+	entry_raw(\*STDOUT, "<hr />", @_);
+	entry_raw($tfh, "", @_);
 }
 
 initpage(\*STDOUT, "Game of Trees Mail Archive");
@@ -104,7 +122,6 @@ print <<EOF;
 <main>
 EOF
 
-my $threads_seen = 0;
 while (<>) {
 	chomp;
 	m/^[^ ]+ <([^>]+)> (.+)(\d{4}-\d{2}-\d{2} \d{2}:\d{2}) <([^>]+)> (.*)/;
@@ -124,20 +141,14 @@ while (<>) {
 	$subj =~ s/\s+/ /g;
 	$subj =~ s/\s+$//g;
 
-	my $new_thread = $indent eq " ";
-	say "</section> <hr />" if $threads_seen && $new_thread;
-	if ($new_thread) {
-		nextthread($mid, $subj);
-		say "<section class='thread'>";
-	}
-
-	$threads_seen = 1;
-
 	entry($mid, $level, $date, $from, $subj);
+	$last_level = $level;
+	$threads_seen = 1;
 }
 
 if ($threads_seen) {
-	say "</section>" ;
+	say "</ul></li>" x $last_level;
+	say "</ul></div>";
 	endthread();
 }
 
