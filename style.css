@@ -1,0 +1,133 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: 14px sans-serif;
+}
+
+header.mail-header {
+    background-color: #ced7e0;
+    padding: 5px 10px;
+    margin: 10px 0;
+}
+
+header.mail-header img {
+    vertical-align: middle;
+}
+
+header dl {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+}
+
+header dt {
+    width: 70px;
+}
+
+header dd {
+    margin-left: auto;
+    width: calc(100% - 70px);
+    flex-grow: 2;
+}
+
+header dt, header dd {
+    padding: 3px 0;
+}
+
+header.index-header {
+    margin: 20px 0;
+    text-align: center;
+}
+
+h1 {
+    font-weight: normal;
+    font-size: 1.8rem;
+    margin: 0 0 1rem 0;
+}
+
+main {
+    padding: 5px;
+}
+
+pre {
+    font-family: monospace;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+
+hr {
+    display: none;
+}
+
+.thread {
+    margin: 2rem 0;
+}
+
+.thread p {
+    margin: 0;
+}
+
+.thread a {
+    text-decoration: none;
+}
+
+.thread a:hover {
+    text-decoration: underline;
+}
+
+.mail {
+    /* font-family: monospace; */
+    margin: 0.5rem 0;
+    /* display: flex; */
+    /* flex-direction: row; */
+}
+
+.mail:target {
+    background-color: khaki;
+}
+
+.mail .mail-meta {
+    font-size: 13px;
+}
+
+.mail.reply .subject {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre;
+}
+
+.mail.indent-1  { padding-left: 10px; }
+.mail.indent-2  { padding-left: 20px; }
+.mail.indent-3  { padding-left: 30px; }
+.mail.indent-4  { padding-left: 40px; }
+.mail.indent-5  { padding-left: 50px; }
+.mail.indent-6  { padding-left: 60px; }
+.mail.indent-7  { padding-left: 70px; }
+.mail.indent-8  { padding-left: 80px; }
+.mail.indent-9  { padding-left: 90px; }
+.mail.indent-10 { padding-left: 100px; }
+
+
+footer {
+    margin-top: 70px;
+    border-top: 1px solid black;
+}
+
+footer > p {
+    text-align: center;
+}
+
+footer ul {
+    padding: 0;
+    text-align: center;
+}
+
+footer li {
+    display: inline-block;
+    padding: 8px;
+}
