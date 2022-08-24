@@ -10,9 +10,13 @@ my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
 mkdir $outdir;
 
-my $tfh;
+my $tfh; # thread file handle
+my $pfh; # page file handle
+my $page = -1;
 my $threads_seen = 0;
 my $last_level = 0;
+my $entries = 0;
+my $entries_per_page = 100;
 
 my $logo = <<EOF;
 <img srcset='/got-tiny.png, /got-tiny@2x.png 2x'
@@ -44,6 +48,66 @@ sub endpage {
 	open(my $foot, '<', 'foot.html')
 	    or die "can't open foot.html: $!";
 	print $fh $_ while <$foot>;
+}
+
+sub pagename {
+	my $i = shift;
+	return $i == 0 && "index.html" || "$i.html";
+}
+
+sub nextfile {
+	$entries = 0;
+	close($pfh) if defined $pfh;
+	$page += 1;
+	my $path = pagename($page);
+	open($pfh, '>', $path)
+	    or die "can't open $path: $!";
+
+	my $title = "Game of Trees Mail Archive";
+	$title .= " | page $page" if $page != 0;
+	initpage($pfh, $title);
+
+	my $hdr = <<EOF;
+<header class='index-header'>
+  <a href="https://gameoftrees.org" target="_blank">
+    <img src='/got.png'
+         srcset='/got.png, /got@2x.png 2x'
+         alt='"GOT" where the "O" is a cute smiling sun.' />
+  </a>
+  <h1>$title</h1>
+</header>
+<main>
+EOF
+	say $pfh $hdr;
+}
+
+sub fixfiles {
+	close($pfh);
+
+	my ($first, $last) = (pagename(0), pagename($page));
+
+	for (my $i = 0; $i <= $page; $i++) {
+		my $path = pagename($i);
+
+		open(my $page, '>>', $path)
+		    or die "can't open $page for append: $!";
+
+		if ($page > 1) {
+			my ($next, $prev) = (pagename($i+1), pagename($i-1));
+
+			say $page "<nav class='next-prev'>";
+			say $page "<a href='$first'>First</a>" if $i > 1;
+			say $page "<a href='$prev'>Prev</a>" if $i > 0;
+			say $page "<a href='$next'>Next</a>" if $i < $page;
+			say $page "<a href='$last'>Last</a>" if $i < $page - 1;
+			say $page "</nav>";
+		}
+
+		say $page "</main>";
+		endpage($page);
+		close($page);
+		rename $path, "$outdir/$path";
+	}
 }
 
 sub nextthread {
@@ -80,6 +144,9 @@ sub entry_raw {
 	say $fh "</ul>\n</div>$sep" if $threads_seen && $new_thread;
 
 	if ($new_thread) {
+		# don't break threads over multiple pages!
+		nextfile if $entries >= $entries_per_page && $fh != $tfh;
+
 		nextthread($mid, $subj);
 		say $fh "<div class='thread'>";
 	}
@@ -106,22 +173,12 @@ sub entry_raw {
 }
 
 sub entry {
-	entry_raw(\*STDOUT, "<hr />", @_);
+	$entries++;
+	entry_raw($pfh, "<hr />", @_);
 	entry_raw($tfh, "", @_);
 }
 
-initpage(\*STDOUT, "Game of Trees Mail Archive");
-print <<EOF;
-<header class='index-header'>
-  <a href="https://gameoftrees.org" target="_blank">
-    <img src='/got.png'
-         srcset='/got.png, /got@2x.png 2x'
-         alt='"GOT" where the "O" is a cute smiling sun.' />
-  </a>
-  <h1>Game of Trees Mail Archive</h1>
-</header>
-<main>
-EOF
+nextfile();
 
 while (<>) {
 	chomp;
@@ -148,10 +205,9 @@ while (<>) {
 }
 
 if ($threads_seen) {
-	say "</ul></li>" x $last_level;
-	say "</ul></div>";
+	say $pfh "</ul></li>" x $last_level;
+	say $pfh "</ul></div>";
 	endthread();
 }
 
-say "</main>";
-endpage(\*STDOUT);
+fixfiles();
