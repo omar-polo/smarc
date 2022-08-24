@@ -26,12 +26,12 @@ header dl {
 }
 
 header dt {
-    width: 70px;
+    width: 64px;
 }
 
 header dd {
     margin-left: auto;
-    width: calc(100% - 70px);
+    width: calc(100% - 64px);
     flex-grow: 2;
 }
 
@@ -81,7 +81,7 @@ hr {
 }
 
 .mail {
-    margin: 0.5rem 0;
+    padding: 0.5rem 5px;
 }
 
 .mail:target {
@@ -98,16 +98,16 @@ hr {
     white-space: pre;
 }
 
-.mail.indent-1  { padding-left: 10px; }
-.mail.indent-2  { padding-left: 20px; }
-.mail.indent-3  { padding-left: 30px; }
-.mail.indent-4  { padding-left: 40px; }
-.mail.indent-5  { padding-left: 50px; }
-.mail.indent-6  { padding-left: 60px; }
-.mail.indent-7  { padding-left: 70px; }
-.mail.indent-8  { padding-left: 80px; }
-.mail.indent-9  { padding-left: 90px; }
-.mail.indent-10 { padding-left: 100px; }
+.mail.indent-1  { padding-left: 15px; }
+.mail.indent-2  { padding-left: 25px; }
+.mail.indent-3  { padding-left: 35px; }
+.mail.indent-4  { padding-left: 45px; }
+.mail.indent-5  { padding-left: 55px; }
+.mail.indent-6  { padding-left: 65px; }
+.mail.indent-7  { padding-left: 75px; }
+.mail.indent-8  { padding-left: 85px; }
+.mail.indent-9  { padding-left: 95px; }
+.mail.indent-10 { padding-left: 105px; }
 
 
 footer {
