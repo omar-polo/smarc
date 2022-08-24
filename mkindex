@@ -17,6 +17,7 @@ my $last_level = 0;
 my $logo = <<EOF;
 <img srcset='/got-tiny.png, /got-tiny@2x.png 2x'
      src='/got-tiny.png'
+     width='64' height='39'
      alt='"GOT", but the "O" is a cute, smiling sun' />
 EOF
 
