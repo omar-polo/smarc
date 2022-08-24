@@ -95,6 +95,9 @@ while (<>) {
 	open(my $mshow, "-|", "mshow", "-nNA", "text/plain", $fname)
 	    or die "can't exec mshow: $!";
 
+	open(my $text, '>', "$outdir/text/$mid.txt")
+	    or die "can't open $outdir/text/$mid.txt: $!";
+
 	print $fh "<header class='mail-header'>";
 	print $fh "<p>";
 	print $fh $logo;
@@ -105,6 +108,7 @@ while (<>) {
 	print $fh "<dl>";
 	while (<$mshow>) {
 		chomp;
+		say $text $_;
 		last if /^$/;
 		my ($h, $v) = m/^([-A-Za-z]+): (.*)/;
 		die "bogus line? $fname : $_" unless (defined $h and defined $v);
@@ -116,7 +120,8 @@ while (<>) {
 		print $fh "<dd>", san($v), "</dd>";
 	}
 	print $fh "</dl>";
-	print $fh "<p><a href='/mbox/$mid.mbox'>Raw message</a></p>";
+	print $fh "<p>Raw <a href='/mbox/$mid.mbox'>message</a>";
+	print $fh " or <a href='/text/$mid.txt'>body</a>.</p>";
 	print $fh "</header>";
 
 	my $body = do {
@@ -125,9 +130,10 @@ while (<>) {
 	};
 
 	print $fh "<pre>";
-	# print $fh san($_) while <>;
 	print $fh san($body // "");
 	print $fh "</pre>";
+
+	print $text $body;
 
 	# generate the listing for the exported parts
 	my $part_seen = 0;
@@ -142,6 +148,7 @@ while (<>) {
 
 	print $fh $foot;
 
+	close($text);
 	close($mshow);
 	close($parts);
 	close($fh);
