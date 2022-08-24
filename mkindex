@@ -167,7 +167,7 @@ sub entry_raw {
 	}
 	print $fh "</p>";
 	print $fh "<p class='subject'>";
-	print $fh "<a href='/$mid.html'>$subj</a>";
+	print $fh "<a href='/mail/$mid.html'>$subj</a>";
 	print $fh "</p>";
 	print $fh "</li>\n";
 }

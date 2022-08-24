@@ -74,7 +74,8 @@ while (<>) {
 
 	chomp($mid);
 
-	next if -f "$outdir/$mid.html";
+	my $dest = "$outdir/mail/$mid.html";
+	next if -f $dest;
 
 	my $level = length($indent) - 1;
 	$level = 10 if $indent =~ m/\.\.\d{2}\.\./;
@@ -83,7 +84,6 @@ while (<>) {
 
 	genmbox($fname, $mid);
 
-	my $dest = "$outdir/$mid.html";
 	open(my $fh, '>', "$dest") or die "can't open $dest: $!";
 
 	say $fh $hdr =~ s/TITLE/$subj/r;
