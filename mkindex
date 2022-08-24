@@ -89,23 +89,23 @@ sub fixfiles {
 	for (my $i = 0; $i <= $page; $i++) {
 		my $path = pagename($i);
 
-		open(my $page, '>>', $path)
-		    or die "can't open $page for append: $!";
+		open(my $pfh, '>>', $path)
+		    or die "can't open $path for append: $!";
 
 		if ($page > 1) {
 			my ($next, $prev) = (pagename($i+1), pagename($i-1));
 
-			say $page "<nav class='next-prev'>";
-			say $page "<a href='$first'>First</a>" if $i > 1;
-			say $page "<a href='$prev'>Prev</a>" if $i > 0;
-			say $page "<a href='$next'>Next</a>" if $i < $page;
-			say $page "<a href='$last'>Last</a>" if $i < $page - 1;
-			say $page "</nav>";
+			say $pfh "<nav class='next-prev'><!-- $pfh -->";
+			say $pfh "<a href='$first'>First</a>" if $i > 1;
+			say $pfh "<a href='$prev'>Prev</a>" if $i > 0;
+			say $pfh "<a href='$next'>Next</a>" if $i < $page;
+			say $pfh "<a href='$last'>Last</a>" if $i < $page - 1;
+			say $pfh "</nav>";
 		}
 
-		say $page "</main>";
-		endpage($page);
-		close($page);
+		say $pfh "</main>";
+		endpage($pfh);
+		close($pfh);
 		rename $path, "$outdir/$path";
 	}
 }
