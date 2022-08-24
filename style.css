@@ -107,6 +107,16 @@ hr {
     white-space: pre;
 }
 
+nav.next-prev {
+    margin: 3rem 1rem 1rem;
+    text-align: center;
+}
+
+nav.next-prev a {
+    display: inline-block;
+    margin: 0 1rem;
+}
+
 footer {
     margin-top: 70px;
     border-top: 1px solid #333;
