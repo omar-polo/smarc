@@ -152,6 +152,10 @@ footer li {
         background-color: #390039;
     }
 
+    .mail:target {
+        background-color: #574f03;
+    }
+
     footer {
         border-color: #ffffea;
     }
