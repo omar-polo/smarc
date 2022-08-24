@@ -34,6 +34,11 @@ Usage
 will create and populate a `www' directory with the HTML files.  Pass
 OUTDIR to override the destination directory.
 
+Every once in a while, the maildir should be synced (with mbsync for
+example) and `make' re-run to update the archive.  gotmarc does
+incremental updates to some extent so except for the first run, which
+will take a while, updating the archive should be fast.
+
 For use with httpd' `gzip-static' (or similar)
 
 	$ make gzip
