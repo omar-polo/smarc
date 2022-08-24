@@ -38,6 +38,24 @@ sub san {
 	return $str;
 }
 
+sub genmbox {
+	my ($fname, $mid) = @_;
+
+	open(my $fh, ">", "$outdir/mbox/$mid.mbox")
+	    or die "can't open $outdir/mbox/$mid.mbox: $!";
+
+	my $pid = fork();
+	die "fork: $!" unless defined $pid;
+	if ($pid == 0) {
+		open \*STDOUT, '>&', $fh;
+		exec('mexport', $fname)
+		    or die "exec mexport: $!";
+	}
+	die "waitpid: $!" if waitpid($pid, 0) == -1;
+	die "mexport failed with $?" if $? != 0;
+	# waitpid($pid, 0);
+}
+
 my $tid;
 while (<>) {
 	chomp;
@@ -61,6 +79,8 @@ while (<>) {
 	$level = 10 if $indent =~ m/\.\.\d{2}\.\./;
 
 	$tid = $mid if $level == 0;
+
+	genmbox($fname, $mid);
 
 	my $dest = "$outdir/$mid.html";
 	open(my $fh, '>', "$dest") or die "can't open $dest: $!";
@@ -90,7 +110,9 @@ while (<>) {
 		print $fh "<dt>", san($h), ":</dt>";
 		print $fh "<dd>", san($v), "</dd>";
 	}
-	print $fh "</dl></header>";
+	print $fh "</dl>";
+	print $fh "<p><a href='/mbox/$mid.mbox'>Raw message</a></p>";
+	print $fh "</header>";
 
 	my $body = do {
 		local $/ = undef;

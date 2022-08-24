@@ -12,6 +12,7 @@ all: .mblaze dirs assets
 
 dirs:
 	mkdir -p ${OUTDIR}/thread/
+	mkdir -p ${OUTDIR}/mbox/
 
 assets: dirs got.png style.css
 	cp got.png ${OUTDIR}/got@2x.png
