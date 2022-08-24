@@ -1,0 +1,42 @@
+GOTMARC -- because $POPULAR_ARCHIVE hates us!
+=============================================
+
+A collection of scripts to generate a static mail archive from a
+Maildir; intended to provide a public web interface for the Game of
+Trees mailing list.
+
+The dependencies are:
+
+ - mblaze
+ - imagemagick (to resize the got logo)
+
+
+How it works
+------------
+
+The makefile use mlist(1) to gather all the mail of the mailing list,
+mthread(1) to arrange them in threads and mscan(1) to parse them.
+
+Then, two custom scripts are called in the same pipeline:
+
+ - mexp: creates a separate HTML page for each mail, as well as the
+   raw message/body parts and the attachments.  it's the heaviest part
+   of the pipeline.
+
+ - mkindex: generates the index and threads page.
+
+
+Usage
+-----
+
+	$ make MDIR=/path/to/got/maildir
+
+will create and populate a `www' directory with the HTML files.  Pass
+OUTDIR to override the destination directory.
+
+For use with httpd' `gzip-static' (or similar)
+
+	$ make gzip
+
+will recursively compress every file in OUTDIR, leaving the original
+file intact.
