@@ -11,7 +11,7 @@ all: .mblaze dirs assets
 		${ENV} ./mexp | ${ENV} ./mkindex > ${OUTDIR}/index.html
 
 gzip:
-	gzip -kr ${OUTDIR}/
+	gzip -fkr ${OUTDIR}/
 
 dirs:
 	mkdir -p ${OUTDIR}/mbox/
