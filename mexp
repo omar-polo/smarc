@@ -27,8 +27,6 @@ while (<>) {
 	$mid =~ s,_,__,g;
 	$mid =~ s,/,_,g;
 
-	chomp($mid);
-
 	my $dest = "$outdir/mail/$mid.html";
 	next if -f $dest;
 
