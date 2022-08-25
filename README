@@ -17,12 +17,15 @@ How it works
 The makefile uses mlist(1) to gather all the mail of the mailing list,
 mthread(1) for threading and mscan(1) for parsing.
 
-Then, two custom scripts are called in the same pipeline:
+Then, three custom scripts are called::
 
  - mexp: creates a separate HTML page for each mail, as well as the
    raw message/body parts and the attachments.  It's the heaviest part
    of the pipeline.  If a message appears to have already been exported,
    it will be skipped to save some time.
+
+ - pe: (parallelized export) since mexp is slow, attemps to run N mexp
+   processes in parallel and dispatch threads to them.
 
  - mkindex: generates the index and threads page.
 
