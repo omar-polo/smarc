@@ -19,10 +19,11 @@ my $entries = 0;
 my $entries_per_page = 100;
 
 my $logo = <<EOF;
-<img srcset='/got-tiny.png, /got-tiny@2x.png 2x'
-     src='/got-tiny.png'
-     width='64' height='39'
-     alt='"GOT", but the "O" is a cute, smiling sun' />
+<a href="https://gameoftrees.org" target="_blank">
+  <img srcset='/got-tiny.png, /got-tiny@2x.png 2x'
+       src='/got-tiny.png'
+       width='64' height='39'
+       alt='"GOT", but the "O" is a cute, smiling sun' /></a>
 EOF
 
 sub san {
@@ -120,7 +121,7 @@ sub nextthread {
 	print $tfh "<header class='mail-header'>";
 	print $tfh "<p>";
 	print $tfh $logo;
-	print $tfh "<a href='/'>‹ Back to the index</a>";
+	print $tfh "<a href='/'>Index</a>";
 	print $tfh "</p>";
 	print $tfh "<dl><dt>Thread:</dt><dd>$subj</dd></dl>";
 	print $tfh "</header>\n";

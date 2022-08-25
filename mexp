@@ -25,10 +25,11 @@ my $foot = do {
 };
 
 my $logo = <<EOF;
-<img srcset='/got-tiny.png, /got-tiny@2x.png 2x'
-     src='/got-tiny.png'
-     width='64' height='39'
-     alt='"GOT", but the "O" is a cute, smiling sun' />
+<a href="https://gameoftrees.org" target="_blank">
+  <img srcset='/got-tiny.png, /got-tiny@2x.png 2x'
+       src='/got-tiny.png'
+       width='64' height='39'
+       alt='"GOT", but the "O" is a cute, smiling sun' /></a>
 EOF
 
 sub san {
@@ -102,9 +103,9 @@ while (<>) {
 	print $fh "<header class='mail-header'>";
 	print $fh "<p>";
 	print $fh $logo;
-	print $fh "<a href='/'>← Back to the index</a>";
-	print $fh " or ";
-	print $fh "<a href='/thread/$tid.html#$mid'>→ go to the thread</a>.";
+	print $fh "<a href='/'>Index</a>";
+	print $fh " | ";
+	print $fh "<a href='/thread/$tid.html#$mid'>Thread</a>";
 	print $fh "</p>";
 	print $fh "<dl>";
 	while (<$mshow>) {
@@ -121,7 +122,7 @@ while (<>) {
 		print $fh "<dd>", san($v), "</dd>";
 	}
 	print $fh "</dl>";
-	print $fh "<p>Raw <a href='/mbox/$mid.mbox'>message</a>";
+	print $fh "<p>Download raw <a href='/mbox/$mid.mbox'>message</a>";
 	print $fh " or <a href='/text/$mid.txt'>body</a>.</p>";
 	print $fh "</header>";
 
