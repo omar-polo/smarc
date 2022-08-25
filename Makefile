@@ -24,7 +24,6 @@ ${OUTDIR}/style.css: style.css
 
 dirs:
 	mkdir -p ${OUTDIR}/mail/
-	mkdir -p ${OUTDIR}/mbox/
 	mkdir -p ${OUTDIR}/parts/
 	mkdir -p ${OUTDIR}/text/
 	mkdir -p ${OUTDIR}/thread/

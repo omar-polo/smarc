@@ -40,24 +40,6 @@ sub san {
 	return $str;
 }
 
-sub genmbox {
-	my ($fname, $mid) = @_;
-
-	open(my $fh, ">", "$outdir/mbox/$mid.mbox")
-	    or die "can't open $outdir/mbox/$mid.mbox: $!";
-
-	my $pid = fork();
-	die "fork: $!" unless defined $pid;
-	if ($pid == 0) {
-		open \*STDOUT, '>&', $fh;
-		exec('mexport', $fname)
-		    or die "exec mexport: $!";
-	}
-	die "waitpid: $!" if waitpid($pid, 0) == -1;
-	die "mexport failed with $?" if $? != 0;
-	# waitpid($pid, 0);
-}
-
 my $tid;
 while (<>) {
 	chomp;
@@ -82,8 +64,6 @@ while (<>) {
 
 	$tid = $mid if $level == 0;
 	die "unknown tid" unless defined $tid;
-
-	genmbox($fname, $mid);
 
 	open(my $fh, '>', "$dest") or die "can't open $dest: $!";
 
@@ -122,8 +102,7 @@ while (<>) {
 		print $fh "<dd>", san($v), "</dd>";
 	}
 	print $fh "</dl>";
-	print $fh "<p>Download raw <a href='/mbox/$mid.mbox'>message</a>";
-	print $fh " or <a href='/text/$mid.txt'>body</a>.</p>";
+	print $fh "<p>Download raw <a href='/text/$mid.txt'>body</a>.</p>";
 	print $fh "</header>";
 
 	my $body = do {
