@@ -33,14 +33,14 @@ while (<>) {
 
 	$mid = mid2path($mid);
 
-	my $dest = "$outdir/mail/$mid.html";
-	next if -f $dest;
-
 	my $level = length($indent) - 1;
 	$level = 10 if $indent =~ m/\.\.\d{2}\.\./;
 
 	$tid = $mid if $level == 0;
 	die "unknown tid" unless defined $tid;
+
+	my $dest = "$outdir/mail/$mid.html";
+	next if -f $dest;
 
 	open(my $fh, '>', "$dest") or die "can't open $dest: $!";
 
