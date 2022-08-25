@@ -6,6 +6,8 @@ use strict;
 use warnings;
 use v5.32;
 
+use File::Copy;
+
 use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
@@ -79,7 +81,7 @@ sub fixfiles {
 		say $pfh "</main>";
 		endpage($pfh);
 		close($pfh);
-		rename $path, "$outdir/$path";
+		move $path, "$outdir/$path";
 	}
 }
 
