@@ -6,6 +6,9 @@ use strict;
 use warnings;
 use v5.32;
 
+use OpenBSD::Pledge;
+use OpenBSD::Unveil;
+
 use lib ".";
 use GotMArc qw($logo san mid2path initpage endpage);
 
@@ -147,6 +150,10 @@ sub entry {
 	entry_raw($pfh, "<hr />", @_);
 	entry_raw($tfh, "", @_);
 }
+
+unveil($outdir, "rwc") or die "unveil $outdir: $!";
+unveil(".", "rwc") or die "unveil .: $!";
+pledge("stdio rpath wpath cpath") or die "pledge: $!";
 
 nextfile();
 

@@ -6,6 +6,9 @@ use warnings;
 use v5.32;
 use IO::Poll qw(POLLOUT);
 
+use OpenBSD::Pledge;
+use OpenBSD::Unveil;
+
 my $jobs = $ENV{'MAKE_JOBS'} // 1;
 
 my $poll = IO::Poll->new();
@@ -21,6 +24,9 @@ sub process {
 	my $handle = $handles[int(rand(@handles))];
 	say $handle $_ foreach @_;
 }
+
+unveil("./mexp", "rx") or die "unveil mexp: $!";
+pledge("stdio proc exec") or die "pledge: $!";
 
 my @thread;
 while (<>) {

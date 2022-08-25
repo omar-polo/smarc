@@ -6,11 +6,19 @@ use strict;
 use warnings;
 use v5.32;
 
+use OpenBSD::Pledge;
+use OpenBSD::Unveil;
+
 use lib ".";
 use GotMArc qw(san $logo mid2path initpage endpage);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
+
+unveil("/usr/local/bin/mshow", "rx") or die "unveil mshow: $!";
+unveil($outdir, "rwc") or die "unveil $outdir: $!";
+unveil(".", "rwc") or die "unveil .: $!";
+pledge("stdio rpath wpath cpath proc exec") or die "pledge: $!";
 
 my $tid;
 while (<>) {
