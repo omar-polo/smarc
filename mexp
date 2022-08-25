@@ -75,16 +75,12 @@ while (<>) {
 	print $fh "<p>Download raw <a href='/text/$mid.txt'>body</a>.</p>";
 	print $fh "</header>";
 
-	my $body = do {
-		local $/ = undef;
-		<$mshow>;
-	};
-
 	print $fh "<pre>";
-	print $fh san($body // "");
+	while (<$mshow>) {
+		print $text $_;
+		print $fh san($_);
+	}
 	print $fh "</pre>";
-
-	print $text $body;
 
 	# generate the listing for the exported parts
 	my $part_seen = 0;
