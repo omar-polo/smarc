@@ -85,9 +85,8 @@ hr {
     list-style: none;
 }
 
-.thread > ul ul {
-    border-left: 1px dashed #cacaca;
-}
+.thread ul   { border-left: 1px dashed #cacaca; }
+.thread > ul { border-left: 0px; }
 
 .mail {
     padding: 0.5rem 5px;
