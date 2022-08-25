@@ -6,6 +6,9 @@ use strict;
 use warnings;
 use v5.32;
 
+use lib ".";
+use GotMArc qw($logo san initpage endpage);
+
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
 mkdir $outdir;
@@ -17,39 +20,6 @@ my $threads_seen = 0;
 my $last_level = 0;
 my $entries = 0;
 my $entries_per_page = 100;
-
-my $logo = <<EOF;
-<a href="https://gameoftrees.org" target="_blank">
-  <img srcset='/got-tiny.png, /got-tiny@2x.png 2x'
-       src='/got-tiny.png'
-       width='64' height='39'
-       alt='"GOT", but the "O" is a cute, smiling sun' /></a>
-EOF
-
-sub san {
-	my $str = shift;
-	$str =~ s/&/\&amp;/g;
-	$str =~ s/</\&lt;/g;
-	$str =~ s/>/\&gt;/g;
-	return $str;
-}
-
-sub initpage {
-	my ($fh, $title) = @_;
-	open(my $hdr, '<', 'head.html')
-	    or die "can't open head.html: $!";
-	while (<$hdr>) {
-		s/TITLE/$title/;
-		print $fh $_;
-	}
-}
-
-sub endpage {
-	my $fh = shift;
-	open(my $foot, '<', 'foot.html')
-	    or die "can't open foot.html: $!";
-	print $fh $_ while <$foot>;
-}
 
 sub pagename {
 	my $i = shift;

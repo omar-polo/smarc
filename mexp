@@ -6,39 +6,12 @@ use strict;
 use warnings;
 use v5.32;
 
+use lib ".";
+use GotMArc qw(san $logo initpage endpage);
+
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
 mkdir $outdir;
-
-my $hdr = do {
-	local $/ = undef;
-	open my $fh, "<", "head.html"
-	    or die "can't open head.html: $!";
-	<$fh>;
-};
-
-my $foot = do {
-	local $/ = undef;
-	open my $fh, "<", "foot.html"
-	    or die "can't open foot.html: $!";
-	<$fh>;
-};
-
-my $logo = <<EOF;
-<a href="https://gameoftrees.org" target="_blank">
-  <img srcset='/got-tiny.png, /got-tiny@2x.png 2x'
-       src='/got-tiny.png'
-       width='64' height='39'
-       alt='"GOT", but the "O" is a cute, smiling sun' /></a>
-EOF
-
-sub san {
-	my $str = shift;
-	$str =~ s/&/\&amp;/g;
-	$str =~ s/</\&lt;/g;
-	$str =~ s/>/\&gt;/g;
-	return $str;
-}
 
 my $tid;
 while (<>) {
@@ -67,7 +40,7 @@ while (<>) {
 
 	open(my $fh, '>', "$dest") or die "can't open $dest: $!";
 
-	say $fh $hdr =~ s/TITLE/$subj/r;
+	initpage $fh, $subj;
 
 	# prepare the parts listing file
 	$ENV{'MESSAGE_ID'} = $mid;
@@ -127,14 +100,12 @@ while (<>) {
 	}
 	say $fh "</ul>" if $part_seen;
 
-	print $fh $foot;
+	endpage $fh;
 
 	close($text);
 	close($mshow);
 	close($parts);
 	close($fh);
-
-	# exit(0);
 }
 
 unlink "parts.html";
