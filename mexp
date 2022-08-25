@@ -81,6 +81,7 @@ while (<>) {
 	$level = 10 if $indent =~ m/\.\.\d{2}\.\./;
 
 	$tid = $mid if $level == 0;
+	die "unknown tid" unless defined $tid;
 
 	genmbox($fname, $mid);
 
