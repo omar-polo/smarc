@@ -8,7 +8,7 @@ OUTDIR =	www
 all: .mblaze dirs assets
 	mlist '${MDIR}' | mthread -r | \
 		${ENV} mscan -f '%R %I %i %16D <%64f> %128S' | \
-		${ENV} ./mexp | ${ENV} ./mkindex
+		${ENV} ./pe | ${ENV} ./mkindex
 
 gzip:
 	gzip -fkr ${OUTDIR}/

@@ -60,7 +60,6 @@ sub genmbox {
 my $tid;
 while (<>) {
 	chomp;
-	say; # continue the pipeline
 
 	m/^([^ ]+) <([^>]+)> (.+)(\d{4}-\d{2}-\d{2} \d{2}:\d{2}) <([^>]+)> (.*)/;
 	die "can't parse: $_" unless defined $1;

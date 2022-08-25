@@ -1,0 +1,44 @@
+#!/usr/bin/env perl
+
+use open ":std", ":encoding(UTF-8)";
+use strict;
+use warnings;
+use v5.32;
+use IO::Poll qw(POLLOUT);
+
+my $jobs = $ENV{'MAKE_JOBS'} // 1;
+
+my $poll = IO::Poll->new();
+for (1..$jobs) {
+	say STDERR "pe: spawning job #$_";
+	open(my $kid, '|-', './mexp') or die "can't exec ./mexp: $!";
+	$poll->mask($kid => POLLOUT);
+}
+
+sub process {
+	die "poll: $!" if $poll->poll() == -1;
+	my @handles = $poll->handles(POLLOUT) or die "no procs ready?";
+	my $handle = $handles[int(rand(@handles))];
+	say $handle $_ foreach @_;
+}
+
+my @thread;
+while (<>) {
+	print; # continue the pipeline
+	chomp;
+
+	m/^([^ ]+) <([^>]+)> (.+)(\d{4}-\d{2}-\d{2} \d{2}:\d{2}) <([^>]+)> (.*)/;
+	die "can't parse: $_" unless defined $1;
+
+	my $level = length($3) - 1;
+	$level = 10 if $3 =~ m/\.\.\d{2}\.\./;
+
+	if ($level == 0 && @thread) {
+		process @thread;
+		@thread = ();
+	}
+
+	push @thread, $_;
+}
+
+process @thread if @thread;
