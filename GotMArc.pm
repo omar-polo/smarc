@@ -5,7 +5,7 @@ use v5.32;
 use Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw($logo san initpage endpage);
+our @EXPORT_OK = qw($logo san mid2path initpage endpage);
 
 our $logo = <<'EOF';
 <a href="https://gameoftrees.org" target="_blank">
@@ -21,6 +21,13 @@ sub san {
 	$str =~ s/</\&lt;/g;
 	$str =~ s/>/\&gt;/g;
 	return $str;
+}
+
+sub mid2path {
+	my $mid = shift;
+	$mid =~ s,_,__,g;
+	$mid =~ s,/,_,g;
+	return $mid;
 }
 
 my $hdr = do {

@@ -7,7 +7,7 @@ use warnings;
 use v5.32;
 
 use lib ".";
-use GotMArc qw(san $logo initpage endpage);
+use GotMArc qw(san $logo mid2path initpage endpage);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
@@ -24,8 +24,7 @@ while (<>) {
 	$subj =~ s/\s+/ /g;
 	$subj =~ s/\s+$//;
 
-	$mid =~ s,_,__,g;
-	$mid =~ s,/,_,g;
+	$mid = mid2path($mid);
 
 	my $dest = "$outdir/mail/$mid.html";
 	next if -f $dest;

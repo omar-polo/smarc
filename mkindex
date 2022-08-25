@@ -7,7 +7,7 @@ use warnings;
 use v5.32;
 
 use lib ".";
-use GotMArc qw($logo san initpage endpage);
+use GotMArc qw($logo san mid2path initpage endpage);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
@@ -164,8 +164,7 @@ while (<>) {
 	my $level = length($indent) - 1;
 	$level = 10 if $indent =~ m/\.\.\d{2}\.\./;
 
-	$mid =~ s,_,__,g;
-	$mid =~ s,/,_,g;
+	$mid = mid2path($mid);
 
 	$subj =~ s/\s+/ /g;
 	$subj =~ s/\s+$//g;
