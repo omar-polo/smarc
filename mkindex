@@ -6,8 +6,6 @@ use strict;
 use warnings;
 use v5.32;
 
-use File::Copy;
-
 use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
@@ -37,14 +35,48 @@ sub nextfile {
 	my $path = pagename($page);
 	open($pfh, '>', $path)
 	    or die "can't open $path: $!";
+}
 
-	my $title = "Game of Trees Mail Archive";
-	$title .= " | page $page" if $page != 0;
-	initpage($pfh, $title);
+sub nav {
+	my ($pfh, $first, $last, $n) = @_;
+	my ($next, $prev) = (pagename($n+1), pagename($n-1));
 
-	my $subtitle = $page != 0 ? "<p>Page $page</p>" : "";
+	say $pfh "<nav class='next-prev'>";
+	say $pfh "<a href='$first'>First</a>" if $n > 1;
+	say $pfh "<a href='$prev'>Prev</a>" if $n > 0;
+	say $pfh "<a href='$next'>Next</a>" if $n < $page;
+	say $pfh "<a href='$last'>Last</a>" if $n < $page - 1;
+	say $pfh "</nav>";
+}
 
-	my $hdr = <<EOF;
+sub copyfrom {
+	my ($path, $fh) = @_;
+
+	# there are probably faster ways to do this like File::Copy,
+	# but it bypasses the bufio cache...
+	open(my $pfh, '<', $path) or die "can't open $path: $!";
+	print $fh $_ while (<$pfh>);
+}
+
+sub fixfiles {
+	close($pfh);
+
+	my ($first, $last) = (pagename(0), pagename($page));
+
+	for (my $i = 0; $i <= $page; $i++) {
+		my $path = pagename($i);
+		my $dest = "$outdir/$path";
+
+		open(my $pfh, '>', $dest)
+		    or die "can't open $dest for writing: $!";
+
+		my $title = "Game of Trees Mail Archive";
+		$title .= " | page $page" if $page != 0;
+		initpage($pfh, $title);
+
+		my $subtitle = $page != 0 ? "<p>Page $page</p>" : "";
+
+		my $hdr = <<EOF;
 <header class='index-header'>
   <a href="https://gameoftrees.org" target="_blank">
     <img src='/got.png'
@@ -56,35 +88,16 @@ sub nextfile {
 </header>
 <main>
 EOF
-	say $pfh $hdr;
-}
+		say $pfh $hdr;
 
-sub fixfiles {
-	close($pfh);
-
-	my ($first, $last) = (pagename(0), pagename($page));
-
-	for (my $i = 0; $i <= $page; $i++) {
-		my $path = pagename($i);
-
-		open(my $pfh, '>>', $path)
-		    or die "can't open $path for append: $!";
-
-		if ($page > 1) {
-			my ($next, $prev) = (pagename($i+1), pagename($i-1));
-
-			say $pfh "<nav class='next-prev'><!-- $pfh -->";
-			say $pfh "<a href='$first'>First</a>" if $i > 1;
-			say $pfh "<a href='$prev'>Prev</a>" if $i > 0;
-			say $pfh "<a href='$next'>Next</a>" if $i < $page;
-			say $pfh "<a href='$last'>Last</a>" if $i < $page - 1;
-			say $pfh "</nav>";
-		}
+		nav $pfh, $first, $last, $i if $page > 1;
+		copyfrom($path, $pfh);
+		nav $pfh, $first, $last, $i if $page > 1;
 
 		say $pfh "</main>";
+
 		endpage($pfh);
 		close($pfh);
-		move $path, "$outdir/$path";
 	}
 }
 
