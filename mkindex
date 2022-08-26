@@ -71,10 +71,10 @@ sub fixfiles {
 		    or die "can't open $dest for writing: $!";
 
 		my $title = "Game of Trees Mail Archive";
-		$title .= " | page $page" if $page != 0;
+		$title .= " | page $i" if $i != 0;
 		initpage($pfh, $title);
 
-		my $subtitle = $page != 0 ? "<p>Page $page</p>" : "";
+		my $subtitle = $i != 0 ? "<p>Page $i</p>" : "";
 
 		my $hdr = <<EOF;
 <header class='index-header'>
