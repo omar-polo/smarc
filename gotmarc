@@ -4,7 +4,7 @@
 export MAKE_JOBS="${MAKE_JOBS:-1}"
 export MBLAZE=.mblaze
 export MBLAZE_PAGER=cat
-export OUTDIR="${OUTDIR:-www}"
+export OUTDIR="${OUTDIR:-/var/www/marc}"
 
 : ${MDIR:?not defined}
 
