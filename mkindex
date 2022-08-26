@@ -17,7 +17,7 @@ die 'Set $OUTDIR' unless defined $outdir;
 
 my $tfh; # thread file handle
 my $pfh; # page file handle
-my $page = -1;
+my $page = 0;
 my $threads_seen = 0;
 my $last_level = 0;
 my $entries = 0;
@@ -25,7 +25,7 @@ my $entries_per_page = 100;
 
 sub pagename {
 	my $i = shift;
-	return $i == 0 && "index.html" || "$i.html";
+	return $i == 1 && "index.html" || "$i.html";
 }
 
 sub endfile {
@@ -47,8 +47,8 @@ sub nav {
 	my ($next, $prev) = (pagename($n+1), pagename($n-1));
 
 	say $pfh "<nav class='next-prev'>";
-	say $pfh "<a href='$first'>First</a>" if $n > 1;
-	say $pfh "<a href='$prev'>Prev</a>" if $n > 0;
+	say $pfh "<a href='$first'>First</a>" if $n > 2;
+	say $pfh "<a href='$prev'>Prev</a>" if $n > 1;
 	say $pfh "<a href='$next'>Next</a>" if $n < $page;
 	say $pfh "<a href='$last'>Last</a>" if $n < $page - 1;
 	say $pfh "</nav>";
@@ -68,7 +68,7 @@ sub fixfiles {
 
 	my ($first, $last) = (pagename(0), pagename($page));
 
-	for (my $i = 0; $i <= $page; $i++) {
+	for (my $i = 1; $i <= $page; $i++) {
 		my $path = pagename($i);
 		my $dest = "$outdir/$path";
 
