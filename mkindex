@@ -166,8 +166,7 @@ sub thread_entry {
 unveil($outdir, "rwc") or die "unveil $outdir: $!";
 unveil(".", "rwc") or die "unveil .: $!";
 
-# fattr is needed by move
-pledge("stdio rpath wpath cpath fattr") or die "pledge: $!";
+pledge("stdio rpath wpath cpath") or die "pledge: $!";
 
 nextfile;
 
