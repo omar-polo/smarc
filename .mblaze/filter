@@ -1,2 +1,8 @@
+#: Use ./filter-ignore to silently ignore an attachment and
+#: ./filter-export to export it.  text/* is already handled
+#: by mshow(1).
 application/pgp-signature: ./filter-ignore
 application: ./filter-export
+audio: ./filter-ignore
+image: ./filter-ignore
+video: ./filter-ignore
