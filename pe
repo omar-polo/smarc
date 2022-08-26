@@ -13,7 +13,6 @@ my $jobs = $ENV{'MAKE_JOBS'} // 1;
 
 my $poll = IO::Poll->new();
 for (1..$jobs) {
-	say STDERR "pe: spawning job #$_";
 	open(my $kid, '|-', './mexp') or die "can't exec ./mexp: $!";
 	$poll->mask($kid => POLLOUT);
 }
