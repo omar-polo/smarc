@@ -28,13 +28,18 @@ sub pagename {
 	return $i == 0 && "index.html" || "$i.html";
 }
 
+sub endfile {
+	say $pfh '</ul></div>';
+	close($pfh);
+}
+
 sub nextfile {
-	$entries = 0;
-	close($pfh) if defined $pfh;
+	endfile if defined $pfh;
 	$page += 1;
 	my $path = pagename($page);
 	open($pfh, '>', $path)
 	    or die "can't open $path: $!";
+	say $pfh "<div class='thread'><ul>";
 }
 
 sub nav {
@@ -127,20 +132,27 @@ sub endthread {
 	$last_level = 0;
 }
 
-sub entry_raw {
-	my ($fh, $sep, $mid, $level, $date, $from, $subj) = @_;
-	my $new_thread = $level == 0;
+sub entry {
+	my ($fh, $type, $mid, $date, $from, $subj) = @_;
+	print $fh "<li id='$mid' class='mail'>";
+	print $fh "<p class='mail-meta'>";
+	print $fh "<time>$date</time> ";
+	print $fh "<span class='from'>$from</span>";
+	print $fh "<span class='colon'>:</span>";
+	print $fh "</p>";
+	print $fh "<p class='subject'>";
+	print $fh "<a href='/$type/$mid.html'>$subj</a>";
+	print $fh "</p>";
+	print $fh "</li>\n";
+}
+
+sub thread_entry {
+	my ($fh, $mid, $level, $date, $from, $subj) = @_;
 
 	say $fh "</ul>\n</li>" x ($last_level - $level) if $last_level > $level;
-	say $fh "</ul>\n</div>$sep" if $threads_seen && $new_thread;
+	say $fh "</ul>\n</div>" if $threads_seen && $level == 0;
 
-	if ($new_thread) {
-		# don't break threads over multiple pages!
-		nextfile if $entries >= $entries_per_page && $fh != $tfh;
-
-		nextthread($mid, $subj);
-		say $fh "<div class='thread'>";
-	}
+	say $fh "<div class='thread'>" if $level == 0;
 
 	if ($last_level < $level) {
 		say $fh "<li>\n<ul>";
@@ -148,25 +160,7 @@ sub entry_raw {
 		say $fh "<ul class='mails'>";
 	}
 
-	print $fh "<li id='$mid' class='mail'>";
-	print $fh "<p class='mail-meta'>";
-	print $fh "<time>$date</time> ";
-	print $fh "<span class='from'>$from</span>";
-	print $fh "<span class='colon'>:</span>";
-	if ($fh != $tfh && $level == 0) {
-		print $fh " (<a href='/thread/$mid.html'>thread</a>)";
-	}
-	print $fh "</p>";
-	print $fh "<p class='subject'>";
-	print $fh "<a href='/mail/$mid.html'>$subj</a>";
-	print $fh "</p>";
-	print $fh "</li>\n";
-}
-
-sub entry {
-	$entries++;
-	entry_raw($pfh, "<hr />", @_);
-	entry_raw($tfh, "", @_);
+	entry $fh, "mail", $mid, $date, $from, $subj;
 }
 
 unveil($outdir, "rwc") or die "unveil $outdir: $!";
@@ -175,7 +169,7 @@ unveil(".", "rwc") or die "unveil .: $!";
 # fattr is needed by move
 pledge("stdio rpath wpath cpath fattr") or die "pledge: $!";
 
-nextfile();
+nextfile;
 
 while (<>) {
 	chomp;
@@ -195,15 +189,22 @@ while (<>) {
 	$subj =~ s/\s+/ /g;
 	$subj =~ s/\s+$//g;
 
-	entry($mid, $level, $date, $from, $subj);
+	if ($level == 0) {
+		nextthread $mid, $subj;
+
+		$entries++;
+		if ($entries > $entries_per_page) {
+			nextfile;
+			$entries = 0;
+		}
+		entry $pfh, "thread", $mid, $date, $from, $subj;
+	}
+
+	thread_entry($tfh, $mid, $level, $date, $from, $subj);
 	$last_level = $level;
 	$threads_seen = 1;
 }
 
-if ($threads_seen) {
-	say $pfh "</ul></li>" x $last_level;
-	say $pfh "</ul></div>";
-	endthread();
-}
-
+endfile;
+endthread if $threads_seen;
 fixfiles();
