@@ -103,6 +103,8 @@ EOF
 
 		endpage($pfh);
 		close($pfh);
+
+		unlink $path;
 	}
 }
 
