@@ -40,7 +40,6 @@ header dt, header dd {
 }
 
 header.index-header {
-    margin: 20px 0;
     text-align: center;
 }
 
@@ -107,7 +106,7 @@ hr {
 }
 
 nav.next-prev {
-    margin: 3rem 1rem 1rem;
+    margin: 1rem;
     text-align: center;
 }
 
