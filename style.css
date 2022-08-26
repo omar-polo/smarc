@@ -139,12 +139,12 @@ footer li {
 /* dark theme */
 @media (prefers-color-scheme: dark) {
     body {
-        color: #ffffea;
-        background-color: #383838;
+        color: #eeeff1;
+        background-color: #1e1f21;
     }
 
     a {
-        color: #8e8eff;
+        color: #bad7ff;
     }
 
     header.mail-header {
