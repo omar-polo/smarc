@@ -4,7 +4,7 @@ OUTDIR =	/var/www/marc/
 .PHONY: all assets images dirs gzip clean
 
 all: assets
-	env MDIR="${MDIR}" OUTDIR="${OUTDIR}" ./gotmarc
+	@env MDIR="${MDIR}" OUTDIR="${OUTDIR}" ./gotmarc
 
 assets: dirs images ${OUTDIR}/style.css
 
@@ -23,10 +23,10 @@ ${OUTDIR}/style.css: style.css
 	cp style.css ${OUTDIR}
 
 dirs:
-	mkdir -p ${OUTDIR}/mail/
-	mkdir -p ${OUTDIR}/parts/
-	mkdir -p ${OUTDIR}/text/
-	mkdir -p ${OUTDIR}/thread/
+	@mkdir -p ${OUTDIR}/mail/
+	@mkdir -p ${OUTDIR}/parts/
+	@mkdir -p ${OUTDIR}/text/
+	@mkdir -p ${OUTDIR}/thread/
 
 gzip:
 	gzip -fkr ${OUTDIR}/
