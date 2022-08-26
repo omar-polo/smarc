@@ -18,10 +18,25 @@ die 'Set $OUTDIR' unless defined $outdir;
 my $tfh; # thread file handle
 my $pfh; # page file handle
 my $page = 0;
+my @pages;
+my $from_day;
+my $to_day;
 my $threads_seen = 0;
 my $last_level = 0;
 my $entries = 0;
 my $entries_per_page = 100;
+
+sub maxs {
+	my ($a, $b) = @_;
+	return $a unless defined $b;
+	return $a gt $b ? $a : $b;
+}
+
+sub mins {
+	my ($a, $b) = @_;
+	return $a unless defined $b;
+	return $a lt $b ? $a : $b;
+}
 
 sub pagename {
 	my $i = shift;
@@ -31,6 +46,7 @@ sub pagename {
 sub endfile {
 	say $pfh '</ul></div>';
 	close($pfh);
+	push @pages, "$from_day - $to_day";
 }
 
 sub nextfile {
@@ -75,11 +91,10 @@ sub fixfiles {
 		open(my $pfh, '>', $dest)
 		    or die "can't open $dest for writing: $!";
 
-		my $title = "Game of Trees Mail Archive";
-		$title .= " | page $i" if $i != 0;
+		my $title = "Game of Trees Mail Archive | page $i";
 		initpage($pfh, $title);
 
-		my $subtitle = $i != 0 ? "<p>Page $i</p>" : "";
+		my $subtitle = $pages[$i-1];
 
 		my $hdr = <<EOF;
 <header class='index-header'>
@@ -89,7 +104,8 @@ sub fixfiles {
          alt='"GOT" where the "O" is a cute smiling sun.' />
   </a>
   <h1>Game of Trees Mail Archive</h1>
-  $subtitle
+  <p>Page $i</p>
+  <p>$subtitle</p>
 </header>
 <main>
 EOF
@@ -174,6 +190,7 @@ nextfile;
 
 while (<>) {
 	my ($level, $fname, $mid, $date, $from, $subj) = parse;
+	my $day = $date =~ s/ .*//r;
 
 	if ($level == 0) {
 		nextthread $mid, $subj;
@@ -182,9 +199,14 @@ while (<>) {
 		if ($entries > $entries_per_page) {
 			nextfile;
 			$entries = 0;
+			$to_day = undef;
+			$from_day = undef;
 		}
 		entry $pfh, "thread", $mid, $date, $from, $subj;
 	}
+
+	$to_day = mins $day, $to_day;
+	$from_day = maxs $day, $from_day;
 
 	thread_entry($tfh, $mid, $level, $date, $from, $subj);
 	$last_level = $level;
