@@ -1,5 +1,5 @@
-MDIR =		${HOME}/Maildir/op/GoT
-OUTDIR =	www
+MDIR =		${HOME}/Mail/gameoftrees
+OUTDIR =	/var/www/marc/
 
 .PHONY: all assets images dirs gzip clean
 

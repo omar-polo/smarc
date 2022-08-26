@@ -35,8 +35,9 @@ Usage
 
 	$ make MDIR=/path/to/got/maildir
 
-will create and populate a `www' directory with the HTML files.  Pass
-OUTDIR to override the destination directory.
+will create and populate a `/var/www/marc' directory with the HTML
+files.  Pass OUTDIR to override the destination directory.  MDIR
+defaults to ~/Mail/gameoftrees.
 
 Every once in a while, the maildir should be synced (with mbsync for
 example) and `make' re-run to update the archive.  gotmarc does
