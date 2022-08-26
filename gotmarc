@@ -8,5 +8,5 @@ export OUTDIR="${OUTDIR:-/var/www/marc}"
 
 : ${MDIR:?not defined}
 
-fmt='%R %I %i %16D <%64f> %128S'
+fmt='%i-%R %I%16D<%64f>%128S'
 mlist "${MDIR}" | mthread -r | mscan -f "$fmt" | ./pe | ./mkindex

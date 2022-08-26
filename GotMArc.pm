@@ -5,7 +5,7 @@ use v5.32;
 use Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw($logo san mid2path initpage endpage);
+our @EXPORT_OK = qw($logo san parse initpage endpage);
 
 our $logo = <<'EOF';
 <a href="https://gameoftrees.org" target="_blank">
@@ -23,11 +23,38 @@ sub san {
 	return $str;
 }
 
+sub ssan {
+	my $str = shift;
+	$str =~ s/\s+/ /g;
+	$str =~ s/\s+$//;
+	return san($str);
+}
+
 sub mid2path {
 	my $mid = shift;
 	$mid =~ s,_,__,g;
 	$mid =~ s,/,_,g;
 	return $mid;
+}
+
+sub parse {
+	my ($indent, $fname, $mid, $date, $from, $subj) = m{
+		^([^-]*)-			# the indent level
+		([^ ]+)\s			# filename
+		<([^>]+)>			# message id
+		(\d{4}-\d\d-\d\d[ ]\d\d:\d\d)	# date
+		<([^>]+)>			# from
+		(.*)				# subject
+	}x or die "can't parse: $_";
+
+	my $level = length($indent);
+	$level = 10 if $indent =~ m/\.\.\d+\.\./;
+
+	$mid = mid2path($mid);
+	$from = ssan($from);
+	$subj = ssan($subj);
+
+	return ($level, $fname, $mid, $date, $from, $subj);
 }
 
 my $hdr = do {

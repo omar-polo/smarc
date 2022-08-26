@@ -10,7 +10,7 @@ use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
 use lib ".";
-use GotMArc qw(san $logo mid2path initpage endpage);
+use GotMArc qw(parse san $logo initpage endpage);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
@@ -22,19 +22,7 @@ pledge("stdio rpath wpath cpath proc exec") or die "pledge: $!";
 
 my $tid;
 while (<>) {
-	chomp;
-
-	m/^([^ ]+) <([^>]+)> (.+)(\d{4}-\d{2}-\d{2} \d{2}:\d{2}) <([^>]+)> (.*)/;
-	die "can't parse: $_" unless defined $1;
-	my ($fname, $mid, $indent, $date, $from, $subj) = ($1, $2, $3, $4, $5, $6);
-	$subj = san($subj);
-	$subj =~ s/\s+/ /g;
-	$subj =~ s/\s+$//;
-
-	$mid = mid2path($mid);
-
-	my $level = length($indent) - 1;
-	$level = 10 if $indent =~ m/\.\.\d{2}\.\./;
+	my ($level, $fname, $mid, $date, $from, $subj) = parse;
 
 	$tid = $mid if $level == 0;
 	die "unknown tid" unless defined $tid;
