@@ -29,7 +29,7 @@ dirs:
 	@mkdir -p ${OUTDIR}/thread/
 
 gzip:
-	gzip -fkr ${OUTDIR}/
+	gzip -fkr ${OUTDIR}
 
 clean:
 	rm -rf ${OUTDIR}
