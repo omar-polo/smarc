@@ -5,7 +5,7 @@ use v5.32;
 use Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(san parse small_logo initpage endpage index_header);
+our @EXPORT_OK = qw(san parse initpage endpage index_header thread_header);
 
 sub san {
 	my $str = shift;
@@ -61,11 +61,6 @@ my $hdr = readall "head.html";
 my $foot = readall "foot.html";
 my $idxhdr = readall "index-header.html";
 
-sub small_logo {
-	my $fh = shift;
-	print $fh $small_logo;
-}
-
 sub initpage {
 	my ($fh, $title) = @_;
 	say $fh $hdr =~ s/TITLE/$title/r;
@@ -82,5 +77,31 @@ sub index_header {
 	$html =~ s/SUBTITLE/$subtitle/;
 	print $fh $html;
 }
+
+sub thread_header {
+	my ($fh, $tid, $mid, $e) = @_;
+	my @entries = @$e;
+
+	print $fh "<header class='mail-header'>\n";
+
+	print $fh "<p>";
+	print $fh $small_logo;
+	print $fh "<a href='/'>Index</a>";
+	print $fh "| <a href='/thread/$tid.html#$mid'>Thread</a>"
+	    if defined $tid;
+	print $fh "</p>\n";
+
+	say $fh "<dl>";
+	foreach my $entry (@entries) {
+		my ($k, $v) = split /:/, $entry, 2;
+		say $fh "<dt>$k:</dt><dd>$v</dd>";
+	}
+	say $fh "</dl>";
+
+	say $fh "<p>Download raw <a href='/text/$mid.html'>body</a>.</p>"
+	    if defined $mid;
+
+	say $fh "</header>\n";
+};
 
 1;

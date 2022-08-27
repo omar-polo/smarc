@@ -10,7 +10,7 @@ use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
 use lib ".";
-use GotMArc qw(parse san small_logo initpage endpage index_header);
+use GotMArc qw(parse san initpage endpage index_header thread_header);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
@@ -124,14 +124,7 @@ sub nextthread {
 	my $dest = "$outdir/thread/$mid.html";
 	open($tfh, '>', $dest) or die "can't open $dest: $!";
 	initpage($tfh, $subj);
-
-	print $tfh "<header class='mail-header'>";
-	print $tfh "<p>";
-	small_logo $tfh;
-	print $tfh "<a href='/'>Index</a>";
-	print $tfh "</p>";
-	print $tfh "<dl><dt>Thread:</dt><dd>$subj</dd></dl>";
-	print $tfh "</header>\n";
+	thread_header $tfh, undef, undef, ["Thread: $subj"];
 	print $tfh "<div class='thread'><ul class='mails'>\n";
 }
 

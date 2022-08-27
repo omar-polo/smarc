@@ -10,7 +10,7 @@ use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
 use lib ".";
-use GotMArc qw(parse san small_logo initpage endpage);
+use GotMArc qw(parse san initpage endpage thread_header);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
@@ -45,30 +45,18 @@ while (<>) {
 	open(my $text, '>', "$outdir/text/$mid.txt")
 	    or die "can't open $outdir/text/$mid.txt: $!";
 
-	print $fh "<header class='mail-header'>";
-	print $fh "<p>";
-	small_logo $fh;
-	print $fh "<a href='/'>Index</a>";
-	print $fh " | ";
-	print $fh "<a href='/thread/$tid.html#$mid'>Thread</a>";
-	print $fh "</p>";
-	print $fh "<dl>";
+	my @hdrs;
 	while (<$mshow>) {
 		chomp;
 		say $text $_;
 		last if /^$/;
-		my ($h, $v) = m/^([-A-Za-z]+): (.*)/;
-		die "bogus line? $fname : $_" unless (defined $h and defined $v);
 
 		# drop the (1 day ago) string
-		$v =~ s/\(.*\)//g if ($h eq "Date");
-
-		print $fh "<dt>", san($h), ":</dt>";
-		print $fh "<dd>", san($v), "</dd>";
+		s/\(.*\)// if /^Date:/;
+		push @hdrs, san($_);
 	}
-	print $fh "</dl>";
-	print $fh "<p>Download raw <a href='/text/$mid.txt'>body</a>.</p>";
-	print $fh "</header>";
+
+	thread_header $fh, $tid, $mid, \@hdrs;
 
 	print $fh "<pre>";
 	while (<$mshow>) {
