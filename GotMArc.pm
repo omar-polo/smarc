@@ -98,7 +98,7 @@ sub thread_header {
 	}
 	say $fh "</dl>";
 
-	say $fh "<p>Download raw <a href='/text/$mid.html'>body</a>.</p>"
+	say $fh "<p>Download raw <a href='/text/$mid.txt'>body</a>.</p>"
 	    if defined $mid;
 
 	say $fh "</header>\n";
