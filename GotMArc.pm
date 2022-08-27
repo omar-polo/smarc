@@ -93,7 +93,8 @@ sub thread_header {
 
 	say $fh "<dl>";
 	foreach my $entry (@entries) {
-		my ($k, $v) = split /:/, $entry, 2;
+		my ($k, $v) = split /: /, $entry, 2;
+		chomp $v;
 		say $fh "<dt>$k:</dt><dd>$v</dd>";
 	}
 	say $fh "</dl>";
