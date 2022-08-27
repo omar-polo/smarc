@@ -125,7 +125,7 @@ EOF
 
 sub endthread {
 	say $tfh "</ul></li>" x $last_level;
-	say $tfh "</ul></div>\n";
+	say $tfh "</ul>\n</div>\n";
 	endpage($tfh);
 	close($tfh);
 
@@ -146,7 +146,7 @@ sub nextthread {
 	print $tfh "</p>";
 	print $tfh "<dl><dt>Thread:</dt><dd>$subj</dd></dl>";
 	print $tfh "</header>\n";
-	# print $tfh "<div class='thread'><ul class='mails'>\n";
+	print $tfh "<div class='thread'><ul class='mails'>\n";
 }
 
 sub entry {
@@ -167,15 +167,7 @@ sub thread_entry {
 	my ($fh, $mid, $level, $date, $from, $subj) = @_;
 
 	say $fh "</ul>\n</li>" x ($last_level - $level) if $last_level > $level;
-	say $fh "</ul>\n</div>" if $threads_seen && $level == 0;
-
-	say $fh "<div class='thread'>" if $level == 0;
-
-	if ($last_level < $level) {
-		say $fh "<li>\n<ul>";
-	} elsif ($last_level == 0) {
-		say $fh "<ul class='mails'>";
-	}
+	say $fh "<li>\n<ul>" if $last_lever < $level;
 
 	entry $fh, "mail", $mid, $date, $from, $subj;
 }
