@@ -167,7 +167,7 @@ sub thread_entry {
 	my ($fh, $mid, $level, $date, $from, $subj) = @_;
 
 	say $fh "</ul>\n</li>" x ($last_level - $level) if $last_level > $level;
-	say $fh "<li>\n<ul>" if $last_lever < $level;
+	say $fh "<li>\n<ul>" if $last_level < $level;
 
 	entry $fh, "mail", $mid, $date, $from, $subj;
 }
