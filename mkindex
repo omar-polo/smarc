@@ -189,7 +189,6 @@ nextfile;
 
 while (<>) {
 	my ($level, $fname, $mid, $date, $from, $subj) = parse;
-	my $day = $date =~ s/ .*//r;
 
 	if ($level == 0) {
 		nextthread $mid, $subj;
@@ -201,11 +200,13 @@ while (<>) {
 			$to_day = undef;
 			$from_day = undef;
 		}
+
+		my $day = $date =~ s/ .*//r;
+		$to_day = mins $day, $to_day;
+		$from_day = maxs $day, $from_day;
+
 		entry $pfh, "thread", $mid, $date, $from, $subj;
 	}
-
-	$to_day = mins $day, $to_day;
-	$from_day = maxs $day, $from_day;
 
 	thread_entry($tfh, $mid, $level, $date, $from, $subj);
 	$last_level = $level;
