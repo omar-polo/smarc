@@ -53,7 +53,7 @@ while (<>) {
 		last if /^$/;
 
 		# drop the (1 day ago) string
-		s/\(.*\)// if /^Date:/;
+		s/ \(.*\)// if /^Date:/;
 		print $text $_;
 		push @hdrs, san($_);
 	}
