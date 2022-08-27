@@ -59,7 +59,8 @@ sub nextfile {
 }
 
 sub nav {
-	my ($pfh, $first, $last, $n) = @_;
+	my ($pfh, $n) = @_;
+	my ($first, $last) = (pagename(1), pagename($page));
 	my ($next, $prev) = (pagename($n+1), pagename($n-1));
 
 	say $pfh "<nav class='next-prev'>";
@@ -81,8 +82,6 @@ sub copyfrom {
 
 sub fixfiles {
 	close($pfh);
-
-	my ($first, $last) = (pagename(0), pagename($page));
 
 	for (my $i = 1; $i <= $page; $i++) {
 		my $path = pagename($i);
@@ -111,9 +110,9 @@ sub fixfiles {
 EOF
 		say $pfh $hdr;
 
-		nav $pfh, $first, $last, $i if $page > 1;
+		nav $pfh, $i if $page > 1;
 		copyfrom($path, $pfh);
-		nav $pfh, $first, $last, $i if $page > 1;
+		nav $pfh, $i if $page > 1;
 
 		say $pfh "</main>";
 
