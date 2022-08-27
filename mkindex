@@ -123,8 +123,17 @@ EOF
 	}
 }
 
+sub endthread {
+	say $tfh "</ul></li>" x $last_level;
+	say $tfh "</ul></div>\n";
+	endpage($tfh);
+	close($tfh);
+
+	$last_level = 0;
+}
+
 sub nextthread {
-	endthread() if defined($tfh);
+	endthread if defined $tfh;
 	my ($mid, $subj) = @_;
 	my $dest = "$outdir/thread/$mid.html";
 	open($tfh, '>', $dest) or die "can't open $dest: $!";
@@ -138,15 +147,6 @@ sub nextthread {
 	print $tfh "<dl><dt>Thread:</dt><dd>$subj</dd></dl>";
 	print $tfh "</header>\n";
 	# print $tfh "<div class='thread'><ul class='mails'>\n";
-}
-
-sub endthread {
-	say $tfh "</ul></li>" x $last_level;
-	say $tfh "</ul></div>\n";
-	endpage($tfh);
-	close($tfh);
-
-	$last_level = 0;
 }
 
 sub entry {
