@@ -50,14 +50,14 @@ while (<>) {
 
 	my @hdrs;
 	while (<$mshow>) {
-		chomp;
-		say $text $_;
 		last if /^$/;
 
 		# drop the (1 day ago) string
 		s/\(.*\)// if /^Date:/;
+		print $text $_;
 		push @hdrs, san($_);
 	}
+	say $text "";
 
 	thread_header $fh, $tid, $mid, \@hdrs;
 
