@@ -5,5 +5,5 @@ path="$(cd $OUTDIR && mktemp parts/$MESSAGE_ID.XXXXXXXXXX)"
 # save the input
 cat > "$OUTDIR/$path"
 
-echo "<li><a href='/$path'>$(file -b "$OUTDIR/$path")</a></li>" >> parts.html
+echo "<li><a href='/$path'>$(file -b "$OUTDIR/$path")</a></li>" >> $PARTS_PATH
 exit 0

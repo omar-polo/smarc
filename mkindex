@@ -53,7 +53,9 @@ sub nextfile {
 	endfile if defined $pfh;
 	$page += 1;
 	my $path = pagename($page);
-	open($pfh, '>', $path)
+
+	# XXX: mkstemp would be better...
+	open($pfh, '>', "/tmp/$path")
 	    or die "can't open $path: $!";
 	say $pfh "<div class='thread'><ul>";
 }
@@ -84,8 +86,9 @@ sub renderpages {
 	close($pfh);
 
 	for (my $i = 1; $i <= $page; $i++) {
-		my $path = pagename($i);
-		my $dest = "$outdir/$path";
+		my $name = pagename($i);
+		my $path = "/tmp/$name";
+		my $dest = "$outdir/$name";
 
 		open(my $pfh, '>', $dest)
 		    or die "can't open $dest for writing: $!";
@@ -152,7 +155,8 @@ sub thread_entry {
 }
 
 unveil($outdir, "rwc") or die "unveil $outdir: $!";
-unveil(".", "rwc") or die "unveil .: $!";
+unveil(".", "r") or die "unveil .: $!";
+unveil("/tmp", "rwc") or die "unveil /tmp: $!";
 
 pledge("stdio rpath wpath cpath") or die "pledge: $!";
 
