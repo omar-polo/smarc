@@ -5,7 +5,7 @@ use v5.32;
 use Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(san parse small_logo initpage endpage);
+our @EXPORT_OK = qw(san parse small_logo initpage endpage index_header);
 
 sub san {
 	my $str = shift;
@@ -59,6 +59,7 @@ sub readall {
 my $small_logo = readall "logo-small.html";
 my $hdr = readall "head.html";
 my $foot = readall "foot.html";
+my $idxhdr = readall "index-header.html";
 
 sub small_logo {
 	my $fh = shift;
@@ -73,6 +74,13 @@ sub initpage {
 sub endpage {
 	my $fh = shift;
 	say $fh $foot;
+}
+
+sub index_header {
+	my ($fh, $page, $subtitle) = @_;
+	my $html = $idxhdr =~ s/PAGE/$page/r;
+	$html =~ s/SUBTITLE/$subtitle/;
+	print $fh $html;
 }
 
 1;

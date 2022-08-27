@@ -10,7 +10,7 @@ use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
 use lib ".";
-use GotMArc qw(parse san small_logo initpage endpage);
+use GotMArc qw(parse san small_logo initpage endpage index_header);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
@@ -91,34 +91,20 @@ sub renderpages {
 		    or die "can't open $dest for writing: $!";
 
 		my $title = "Game of Trees Mail Archive | page $i";
-		initpage($pfh, $title);
-
 		my $subtitle = $pages[$i-1];
 
-		my $hdr = <<EOF;
-<header class='index-header'>
-  <a href="https://gameoftrees.org" target="_blank">
-    <img src='/got.png'
-         srcset='/got.png, /got@2x.png 2x'
-         alt='"GOT" where the "O" is a cute smiling sun.' />
-  </a>
-  <h1>Game of Trees Mail Archive</h1>
-  <p>Page $i</p>
-  <p>$subtitle</p>
-</header>
-<main>
-EOF
-		say $pfh $hdr;
+		initpage($pfh, $title);
+		index_header $pfh, $i, $subtitle;
+		say $pfh "<main>";
 
 		nav $pfh, $i if $page > 1;
 		copyfrom($path, $pfh);
 		nav $pfh, $i if $page > 1;
 
 		say $pfh "</main>";
-
 		endpage($pfh);
-		close($pfh);
 
+		close($pfh);
 		unlink $path;
 	}
 }
