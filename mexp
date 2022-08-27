@@ -79,6 +79,11 @@ while (<>) {
 	}
 	say $fh "</ul>" if $part_seen;
 
+	print $fh "<nav>";
+	print $fh "<a href='/text/$mid.txt'>Raw body</a>";
+	print $fh "<a href='/thread/$tid.html#$mid'>Thread</a>";
+	print $fh "</nav>\n";
+
 	endpage $fh;
 
 	close($text);
