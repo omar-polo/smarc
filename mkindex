@@ -200,7 +200,7 @@ while (<>) {
 		entry $pfh, "thread", $mid, $date, $from, $subj;
 	}
 
-	thread_entry($tfh, $mid, $level, $date, $from, $subj);
+	thread_entry $tfh, $mid, $level, $date, $from, $subj;
 	$last_level = $level;
 	$threads_seen = 1;
 }
