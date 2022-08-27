@@ -87,7 +87,7 @@ sub thread_header {
 	print $fh "<p>";
 	print $fh $small_logo;
 	print $fh "<a href='/'>Index</a>";
-	print $fh "| <a href='/thread/$tid.html#$mid'>Thread</a>"
+	print $fh " | <a href='/thread/$tid.html#$mid'>Thread</a>"
 	    if defined $tid;
 	print $fh "</p>\n";
 
