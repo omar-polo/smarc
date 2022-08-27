@@ -7,13 +7,12 @@ use Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw($logo san parse initpage endpage);
 
-our $logo = <<'EOF';
-<a href="https://gameoftrees.org" target="_blank">
-  <img srcset='/got-tiny.png, /got-tiny@2x.png 2x'
-       src='/got-tiny.png'
-       width='64' height='39'
-       alt='"GOT", but the "O" is a cute, smiling sun' /></a>
-EOF
+our $logo = do {
+	local $/ = undef;
+	open my $fh, "<", "logo-small.html"
+	    or die "can't open logo-small.html: $!";
+	<$fh>;
+};
 
 sub san {
 	my $str = shift;
