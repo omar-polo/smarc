@@ -5,14 +5,7 @@ use v5.32;
 use Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw($logo san parse initpage endpage);
-
-our $logo = do {
-	local $/ = undef;
-	open my $fh, "<", "logo-small.html"
-	    or die "can't open logo-small.html: $!";
-	<$fh>;
-};
+our @EXPORT_OK = qw(san parse small_logo initpage endpage);
 
 sub san {
 	my $str = shift;
@@ -56,24 +49,26 @@ sub parse {
 	return ($level, $fname, $mid, $date, $from, $subj);
 }
 
-my $hdr = do {
+sub readall {
+	my $path = shift;
 	local $/ = undef;
-	open my $fh, "<", "head.html"
-	    or die "can't open head.html: $!";
+	open my $fh, "<", $path or die "can't open $path: $!";
 	<$fh>;
-};
+}
+
+my $small_logo = readall "logo-small.html";
+my $hdr = readall "head.html";
+my $foot = readall "foot.html";
+
+sub small_logo {
+	my $fh = shift;
+	print $fh $small_logo;
+}
 
 sub initpage {
 	my ($fh, $title) = @_;
 	say $fh $hdr =~ s/TITLE/$title/r;
 }
-
-my $foot = do {
-	local $/ = undef;
-	open my $fh, "<", "foot.html"
-	    or die "can't open foot.html: $!";
-	<$fh>;
-};
 
 sub endpage {
 	my $fh = shift;

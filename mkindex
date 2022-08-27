@@ -10,7 +10,7 @@ use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
 use lib ".";
-use GotMArc qw($logo parse san initpage endpage);
+use GotMArc qw(parse san small_logo initpage endpage);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
@@ -141,7 +141,7 @@ sub nextthread {
 
 	print $tfh "<header class='mail-header'>";
 	print $tfh "<p>";
-	print $tfh $logo;
+	small_logo $tfh;
 	print $tfh "<a href='/'>Index</a>";
 	print $tfh "</p>";
 	print $tfh "<dl><dt>Thread:</dt><dd>$subj</dd></dl>";
