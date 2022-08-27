@@ -80,7 +80,7 @@ sub copyfrom {
 	print $fh $_ while (<$pfh>);
 }
 
-sub fixfiles {
+sub renderpages {
 	close($pfh);
 
 	for (my $i = 1; $i <= $page; $i++) {
@@ -214,4 +214,4 @@ while (<>) {
 
 endfile;
 endthread if $threads_seen;
-fixfiles();
+renderpages;
