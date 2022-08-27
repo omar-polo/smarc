@@ -105,12 +105,12 @@ hr {
     white-space: pre;
 }
 
-nav.next-prev {
+nav {
     margin: 1rem;
     text-align: center;
 }
 
-nav.next-prev a {
+nav a {
     display: inline-block;
     margin: 0 1rem;
 }

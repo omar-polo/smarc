@@ -65,7 +65,7 @@ sub nav {
 	my ($first, $last) = (pagename(1), pagename($page));
 	my ($next, $prev) = (pagename($n+1), pagename($n-1));
 
-	say $pfh "<nav class='next-prev'>";
+	say $pfh "<nav>";
 	say $pfh "<a href='$first'>First</a>" if $n > 2;
 	say $pfh "<a href='$prev'>Prev</a>" if $n > 1;
 	say $pfh "<a href='$next'>Next</a>" if $n < $page;
