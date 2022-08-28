@@ -15,3 +15,11 @@
 - show the original file name in the list of attachments.
 
   see for e.g. /mail/YSqwKz9bbMYM9fHW@benson.stsp.name.html
+
+
+- clarify date ranges
+
+  Threads are sorted by their newest mail, so if an old thread gets a
+  new reply it'll jump in the first page.  The date ranges thus can
+  jump quite a bit when navigating backward/forward.  Is this OK?  Can
+  we communicate it better?
