@@ -8,7 +8,9 @@ Trees mailing list.
 The dependencies are:
 
  - mblaze
- - imagemagick (to resize the got logo)
+
+Optionally, ImageMagick is used to regen the various sizes of the got
+logo in images/.
 
 
 How it works
