@@ -23,8 +23,8 @@ my $from_day;
 my $to_day;
 my $threads_seen = 0;
 my $last_level = 0;
-my $entries = 0;
-my $entries_per_page = 100;
+my $threads = 0;
+my $threads_per_page = 100;
 
 sub maxs {
 	my ($a, $b) = @_;
@@ -168,10 +168,10 @@ while (<>) {
 	if ($level == 0) {
 		nextthread $mid, $subj;
 
-		$entries++;
-		if ($entries > $entries_per_page) {
+		$threads++;
+		if ($threads > $threads_per_page) {
 			nextfile;
-			$entries = 0;
+			$threads = 0;
 			$to_day = undef;
 			$from_day = undef;
 		}
