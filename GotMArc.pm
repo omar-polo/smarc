@@ -1,3 +1,7 @@
+# GotMArc was written by Omar Polo <op@openbsd.org> and is placed in
+# the public domain.  The author hereby disclaims copyright to this
+# source code.
+
 package GotMArc;
 use strict;
 use warnings;

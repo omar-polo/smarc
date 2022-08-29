@@ -1,4 +1,8 @@
 #!/usr/bin/env perl
+#
+# mkindex was written by Omar Polo <op@openbsd.org> and is placed in
+# the public domain.  The author hereby disclaims copyright to this
+# source code.
 
 use open ":std", ":encoding(UTF-8)";
 use utf8;
