@@ -1,5 +1,5 @@
-GOTMARC -- because $POPULAR_ARCHIVE hates us!
-=============================================
+GOTMARC -- A web archive for the Game of Trees mailing list
+===========================================================
 
 A collection of scripts to generate a static mail archive from a
 Maildir; intended to provide a public web interface for the Game of
