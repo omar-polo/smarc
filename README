@@ -5,12 +5,7 @@ A collection of scripts to generate a static mail archive from a
 Maildir; intended to provide a public web interface for the Game of
 Trees mailing list.
 
-The dependencies are:
-
- - mblaze
-
-Optionally, ImageMagick is used to regen the various sizes of the got
-logo in images/.
+The only dependency outside base is mblaze.
 
 
 How it works
