@@ -36,7 +36,8 @@ clean:
 
 # -- maintainer targets --
 
-scaleimgs: images/got.orig.png
+scaleimgs:
 	convert images/got.orig.png -resize 200x200 images/got.png
 	convert images/got.orig.png -resize 128x128 images/got-tiny@2x.png
 	convert images/got.orig.png -resize 64x64 images/got-tiny.png
+	optipng -o7 -zm1-9 images/*.png
