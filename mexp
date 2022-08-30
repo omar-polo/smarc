@@ -22,10 +22,12 @@ die 'Set $OUTDIR' unless defined $outdir;
 
 unveil("/usr/local/bin/mshow", "rx") or die "unveil mshow: $!";
 unveil($outdir, "rwc") or die "unveil $outdir: $!";
+
+# can't use tmppath because File::Temp checks whether /tmp exists.
 unveil("/tmp", "rwc") or die "unveil /tmp: $!";
 unveil(".", "r") or die "unveil .: $!";
 
-# fattr because of File::Temp somehow.
+# fattr for File::Temp
 pledge("stdio rpath wpath cpath proc exec fattr") or die "pledge: $!";
 
 my $tid;
