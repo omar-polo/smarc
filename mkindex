@@ -84,7 +84,7 @@ sub copyfrom {
 	# there are probably faster ways to do this like File::Copy,
 	# but it bypasses the bufio cache...
 	open(my $pfh, '<', $path) or die "can't open $path: $!";
-	print $fh $_ while (<$pfh>);
+	print $fh $_ while <$pfh>;
 }
 
 sub renderpages {
