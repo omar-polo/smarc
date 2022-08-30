@@ -9,6 +9,7 @@ use utf8;
 use strict;
 use warnings;
 use v5.32;
+use File::Temp qw(tempfile);
 
 use OpenBSD::Pledge;
 use OpenBSD::Unveil;
@@ -23,6 +24,7 @@ my $tfh; # thread file handle
 my $pfh; # page file handle
 my $page = 0;
 my @pages;
+my @files;
 my $from_day;
 my $to_day;
 my $threads_seen = 0;
@@ -56,11 +58,10 @@ sub endfile {
 sub nextfile {
 	endfile if defined $pfh;
 	$page += 1;
-	my $path = pagename($page);
 
-	# XXX: mkstemp would be better...
-	open($pfh, '>', "/tmp/$path")
-	    or die "can't open $path: $!";
+	my $path;
+	($pfh, $path) = tempfile "/tmp/gotmarc.index.XXXXXXXXXX";
+	push @files, $path;
 	say $pfh "<div class='thread'><ul>";
 }
 
@@ -91,7 +92,7 @@ sub renderpages {
 
 	for (my $i = 1; $i <= $page; $i++) {
 		my $name = pagename($i);
-		my $path = "/tmp/$name";
+		my $path = shift @files;
 		my $dest = "$outdir/$name";
 
 		open(my $pfh, '>', $dest)
@@ -160,9 +161,12 @@ sub thread_entry {
 
 unveil($outdir, "rwc") or die "unveil $outdir: $!";
 unveil(".", "r") or die "unveil .: $!";
+
+# can't use tmppath because File::Temp checks wether /tmp exists.
 unveil("/tmp", "rwc") or die "unveil /tmp: $!";
 
-pledge("stdio rpath wpath cpath") or die "pledge: $!";
+# fattr for File::Temp
+pledge("stdio rpath wpath cpath fattr") or die "pledge: $!";
 
 nextfile;
 
