@@ -15,7 +15,7 @@ use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
 use lib ".";
-use GotMArc qw(parse san initpage endpage thread_header);
+use GotMArc qw(parse san urlencode initpage endpage thread_header);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
@@ -85,9 +85,12 @@ while (<>) {
 	}
 	say $fh "</ul>" if $part_seen;
 
+	my $encmid = urlencode $mid;
+	my $enctid = urlencode $tid;
+
 	print $fh "<nav>";
-	print $fh "<a href='/text/$mid.txt'>Raw body</a>";
-	print $fh "<a href='/thread/$tid.html#$mid'>Thread</a>";
+	print $fh "<a href='/text/$encmid.txt'>Raw body</a>";
+	print $fh "<a href='/thread/$enctid.html#$encmid'>Thread</a>";
 	print $fh "</nav>\n";
 
 	endpage $fh;

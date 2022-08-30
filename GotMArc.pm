@@ -9,13 +9,23 @@ use v5.32;
 use Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(san parse initpage endpage index_header thread_header);
+our @EXPORT_OK = qw(san urlencode parse initpage endpage index_header thread_header);
 
 sub san {
 	my $str = shift;
 	$str =~ s/&/\&amp;/g;
 	$str =~ s/</\&lt;/g;
 	$str =~ s/>/\&gt;/g;
+	return $str;
+}
+
+sub urlencode {
+	my $str = shift;
+	unless (defined($str)) {
+		my ($pkg, $file, $line) = caller 1;
+		die "bad $pkg / $file:$line";
+	}
+	$str =~ s/([^-_~.A-Za-z0-9])/sprintf("%%%2X", ord($1))/ge;
 	return $str;
 }
 
@@ -86,13 +96,16 @@ sub thread_header {
 	my ($fh, $tid, $mid, $e) = @_;
 	my @entries = @$e;
 
+	my $enctid = urlencode $tid if defined $tid;
+	my $encmid = urlencode $mid if defined $mid;
+
 	print $fh "<header class='mail-header'>\n";
 
 	print $fh "<p>";
 	print $fh $small_logo;
 	print $fh "<a href='/'>Index</a>";
-	print $fh " | <a href='/thread/$tid.html#$mid'>Thread</a>"
-	    if defined $tid;
+	print $fh " | <a href='/thread/$enctid.html#$encmid'>Thread</a>"
+	    if defined $enctid;
 	print $fh "</p>\n";
 
 	say $fh "<dl>";
@@ -103,8 +116,8 @@ sub thread_header {
 	}
 	say $fh "</dl>";
 
-	say $fh "<p>Download raw <a href='/text/$mid.txt'>body</a>.</p>"
-	    if defined $mid;
+	say $fh "<p>Download raw <a href='/text/$encmid.txt'>body</a>.</p>"
+	    if defined $encmid;
 
 	say $fh "</header>\n";
 };

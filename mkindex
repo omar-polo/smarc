@@ -15,7 +15,7 @@ use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
 use lib ".";
-use GotMArc qw(parse san initpage endpage index_header thread_header);
+use GotMArc qw(parse san urlencode initpage endpage index_header thread_header);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
@@ -138,14 +138,16 @@ sub nextthread {
 
 sub entry {
 	my ($fh, $type, $mid, $date, $from, $subj) = @_;
-	print $fh "<li id='$mid' class='mail'>";
+	my $encmid = urlencode $mid;
+
+	print $fh "<li id='$encmid' class='mail'>";
 	print $fh "<p class='mail-meta'>";
 	print $fh "<time>$date</time> ";
 	print $fh "<span class='from'>$from</span>";
 	print $fh "<span class='colon'>:</span>";
 	print $fh "</p>";
 	print $fh "<p class='subject'>";
-	print $fh "<a href='/$type/$mid.html'>$subj</a>";
+	print $fh "<a href='/$type/$encmid.html'>$subj</a>";
 	print $fh "</p>";
 	print $fh "</li>\n";
 }
