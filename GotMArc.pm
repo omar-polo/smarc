@@ -7,6 +7,7 @@ use strict;
 use warnings;
 use v5.32;
 use Exporter;
+use File::Basename;
 
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(san urlencode parse initpage endpage index_header thread_header);
@@ -36,18 +37,10 @@ sub ssan {
 	return san($str);
 }
 
-sub mid2path {
-	my $mid = shift;
-	$mid =~ s,_,__,g;
-	$mid =~ s,/,_,g;
-	return $mid;
-}
-
 sub parse {
-	my ($indent, $fname, $mid, $date, $from, $subj) = m{
+	my ($indent, $fname, $date, $from, $subj) = m{
 		^([^-]*)-			# the indent level
 		([^ ]+)\s			# filename
-		<([^>]+)>			# message id
 		(\d{4}-\d\d-\d\d[ ]\d\d:\d\d)	# date
 		<([^>]+)>			# from
 		(.*)				# subject
@@ -56,9 +49,11 @@ sub parse {
 	my $level = length($indent);
 	$level = 10 if $indent =~ m/\.\.\d+\.\./;
 
-	$mid = mid2path($mid);
 	$from = ssan($from);
 	$subj = ssan($subj);
+
+	my ($time, $id) = split /\./, basename($fname);
+	my $mid = "$time.$id";
 
 	return ($level, $fname, $mid, $date, $from, $subj);
 }
