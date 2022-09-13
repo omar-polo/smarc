@@ -28,7 +28,13 @@ my @files;
 my $from_day;
 my $to_day;
 my $threads_seen = 0;
+
 my $last_level = 0;
+my $last_tid;
+my $last_date;
+my $last_from;
+my $last_subj;
+
 my $threads = 0;
 my $threads_per_page = 100;
 
@@ -152,6 +158,12 @@ sub entry {
 	print $fh "</li>\n";
 }
 
+sub index_entry {
+	my ($fh, $mid, $date, $from, $subj) = @_;
+
+	entry $fh, "thread", $mid, $date, $from, $subj;
+}
+
 sub thread_entry {
 	my ($fh, $mid, $level, $date, $from, $subj) = @_;
 
@@ -189,14 +201,23 @@ while (<>) {
 		my $day = $date =~ s/ .*//r;
 		$to_day = mins $day, $to_day;
 		$from_day = maxs $day, $from_day;
-
-		entry $pfh, "thread", $mid, $date, $from, $subj;
 	}
 
 	thread_entry $tfh, $mid, $level, $date, $from, $subj;
 	$last_level = $level;
 	$threads_seen = 1;
+
+	index_entry $pfh, $last_tid, $last_date, $last_from, $last_subj
+	    if defined $last_tid && $level == 0;
+
+	$last_tid = $mid if $level == 0;
+	$last_date = $date;
+	$last_from = $from;
+	$last_subj = $subj if $level == 0;
 }
+
+index_entry $pfh, $last_tid, $last_date, $last_from, $last_subj
+    if defined $last_tid;
 
 endfile;
 endthread if $threads_seen;
