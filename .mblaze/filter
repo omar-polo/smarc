@@ -4,5 +4,8 @@
 application/pgp-signature: ./filter-ignore
 application: ./filter-export
 audio: ./filter-ignore
+image/gif: ./filter-export
+image/jpeg: ./filter-export
+image/png: ./filter-export
 image: ./filter-ignore
 video: ./filter-ignore
