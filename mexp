@@ -54,7 +54,7 @@ while (<>) {
 	die "unknown tid" unless defined $tid;
 
 	my $dest = "$outdir/mail/$mid.html";
-	# next if -f $dest;
+	next if -f $dest;
 
 	open(my $fh, '>', "$dest") or die "can't open $dest: $!";
 
