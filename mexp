@@ -30,6 +30,22 @@ unveil(".", "r") or die "unveil .: $!";
 # fattr for File::Temp
 pledge("stdio rpath wpath cpath proc exec fattr") or die "pledge: $!";
 
+sub export_part {
+	my ($fh, $n, $fname) = @_;
+
+	my $pid = fork;
+	die "fork: $!" unless defined $pid;
+	if ($pid == 0) {
+		open \*STDOUT, '>&', $fh
+		    or die "can't redirect stdout: $!";
+		exec 'mshow', '-F', '-O', $fname, $n
+		    or die "can't exec mshow: $!";
+	}
+
+	waitpid $pid, 0;
+	die "mshow exited with $? ($n, $fname)" if $?;
+}
+
 my $tid;
 while (<>) {
 	my ($level, $fname, $mid, $date, $from, $subj) = parse;
@@ -38,16 +54,12 @@ while (<>) {
 	die "unknown tid" unless defined $tid;
 
 	my $dest = "$outdir/mail/$mid.html";
-	next if -f $dest;
+	# next if -f $dest;
 
 	open(my $fh, '>', "$dest") or die "can't open $dest: $!";
 
 	initpage $fh, $subj;
 
-	my ($pfh, $parts) = tempfile "/tmp/gotmark.parts.XXXXXXXXXX";
-
-	$ENV{'PARTS_PATH'} = $parts;
-	$ENV{'MESSAGE_ID'} = $mid;
 	open(my $mshow, "-|", "mshow", "-nNA", "text/plain", $fname)
 	    or die "can't exec mshow: $!";
 
@@ -75,13 +87,50 @@ while (<>) {
 	print $fh "</pre>";
 
 	# generate the listing for the exported parts
+	open(my $parts, '-|', 'mshow', '-t', $fname)
+	    or die "can't exec mshow: $!";
+
 	my $part_seen = 0;
-	while (<$pfh>) {
+	while (<$parts>) {
+		my ($n, $mime, $size, $name) =
+		    m/(\d+): ([^ ]+) size=(\d+) name="(.*)"/ or next;
+
+		next if $mime =~ m(application/application/pgp-signature);
+		next if $mime =~ m(audio/*);
+		next if $mime =~ m(video/*);
+
+		my $ext = "bin";
+		if ($mime =~ m(image/*)) {
+			if ($mime eq "image/gif") {
+				$ext = "gif";
+			} elsif ($mime eq "image/jpeg") {
+				$ext = "jpg";
+			} elsif ($mime eq "image/png") {
+				$ext = "png";
+			} else {
+				# skip other image types for now.
+				next;
+			}
+		}
+
+		# text/* is bundled in the body by mshow(1).
+
 		if (!$part_seen) {
 			$part_seen = 1;
 			say $fh "<ul class='parts'>";
 		}
-		print $fh $_;
+
+		my ($p, $path) = tempfile "$outdir/parts/$mid.XXXXXXXXXX";
+		export_part($p, $n, $fname);
+		close($p);
+		rename $path, "$path.$ext"
+		    or die "can' rename $path as $path.ext";
+		chmod 0644, "$path.$ext";
+
+		$path =~ s,^.*/parts/,/parts/,;
+
+		my $url = san("$path.$ext");
+		say $fh "<li><a href='$url'>$name ($size)</a></li>";
 	}
 	say $fh "</ul>" if $part_seen;
 
@@ -97,7 +146,7 @@ while (<>) {
 
 	close($text);
 	close($mshow);
-	close($pfh);
+	close($parts);
 	close($fh);
 
 	unlink $parts;
