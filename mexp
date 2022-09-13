@@ -46,6 +46,20 @@ sub export_part {
 	die "mshow exited with $? ($n, $fname)" if $?;
 }
 
+# like libutil' fmt_scaled
+sub humanize {
+	my $number = shift;
+	my @units = qw(             G          M     K  B);
+	my @scale =   (1024*1024*1024, 1024*1024, 1024, 1);
+
+	for (my $i = 0; $i < @scale; $i++) {
+		if ($scale[$i] < $number) {
+			my $r = $number / $scale[$i];
+			return sprintf "%.0f%s", $r, $units[$i];
+		}
+	}
+}
+
 my $tid;
 while (<>) {
 	my ($level, $fname, $mid, $date, $from, $subj) = parse;
@@ -130,7 +144,8 @@ while (<>) {
 		$path =~ s,^.*/parts/,/parts/,;
 
 		my $url = san("$path.$ext");
-		say $fh "<li><a href='$url'>$name ($size)</a></li>";
+		my $hs = humanize $size;
+		say $fh "<li><a href='$url'>$name ($hs)</a></li>";
 	}
 	say $fh "</ul>" if $part_seen;
 
