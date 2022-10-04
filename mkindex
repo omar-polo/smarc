@@ -210,10 +210,17 @@ while (<>) {
 	index_entry $pfh, $last_tid, $last_date, $last_from, $last_subj
 	    if defined $last_tid && $level == 0;
 
-	$last_tid = $mid if $level == 0;
-	$last_date = $date;
-	$last_from = $from;
-	$last_subj = $subj if $level == 0;
+	# `gt' on dates works because the format used allow for
+	# lexicographic comparisons.
+	if ($level == 0 || $date gt $last_date) {
+		$last_date = $date;
+		$last_from = $from;
+	}
+
+	if ($level == 0) {
+		$last_tid = $mid;
+		$last_subj = $subj;
+	}
 }
 
 index_entry $pfh, $last_tid, $last_date, $last_from, $last_subj
