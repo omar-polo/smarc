@@ -8,12 +8,21 @@ use open ":std", ":encoding(UTF-8)";
 use strict;
 use warnings;
 use v5.32;
+
+use Digest::SHA;
+use Encode qw(encode);
 use IO::Poll qw(POLLOUT);
 
 use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
+use lib ".";
+use GotMArc qw(parse);
+
 my $jobs = $ENV{'MAKE_JOBS'} // 1;
+
+my $csumdir = $ENV{'CSUMDIR'};
+die '$CSUMDIR undefined' unless defined $csumdir;
 
 my $poll = IO::Poll->new();
 for (1..$jobs) {
@@ -21,14 +30,55 @@ for (1..$jobs) {
 	$poll->mask($kid => POLLOUT);
 }
 
+# get current thread checksum
+sub thrsum {
+	my $sha = Digest::SHA->new(256);
+	$sha->add(encode('UTF-8', $_)) for @_;
+	return $sha->hexdigest;
+}
+
+# get stored thread checksum
+sub oldsum {
+	my $tid = shift;
+	open my $fh, '<', "$csumdir/$tid" or return "";
+	my $sum = <$fh>;
+	chomp $sum;
+	return $sum;
+}
+
+# save thread checksum
+sub savesum {
+	my ($tid, $sum) = @_;
+	open my $fh, '>', "$csumdir/$tid"
+	    or die "can't open checksum file $csumdir/$tid: $!";
+	say $fh $sum;
+	close $fh;
+}
+
 sub process {
+	my @entries = @_;
+
+	return unless @entries;
+
+	local $_ = $entries[0];
+	my ($level, $fname, $mid, $date, $from, $subj) = parse;
+	die "wtf?" if $level != 0;
+
+	my $tid = $mid;
+	my $thrsum = thrsum @_;
+	my $oldsum = oldsum $tid;
+	return if $thrsum eq $oldsum;
+
 	die "poll: $!" if $poll->poll() == -1;
 	my @handles = $poll->handles(POLLOUT) or die "no procs ready?";
 	my $handle = $handles[int(rand(@handles))];
-	print $handle $_ foreach @_;
+	print $handle $_ foreach @entries;
+
+	savesum($tid, $thrsum);
 }
 
-pledge("stdio") or die "pledge: $!";
+unveil($csumdir, "rwc") or die "unveil $csumdir: $!";
+pledge("stdio rpath wpath cpath") or die "pledge: $!";
 
 my @thread;
 while (<>) {

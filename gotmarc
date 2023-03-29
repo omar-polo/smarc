@@ -7,6 +7,7 @@ export MBLAZE_PAGER=cat
 export OUTDIR="${OUTDIR:-/var/www/marc}"
 
 : ${MDIR:?not defined}
+: ${CSUMDIR:?not defined}
 
 fmt='%i-%R %16D<%64f>%128S'
 mlist "${MDIR}" | mthread -r | mscan -f "$fmt" | ./pe | ./mkindex

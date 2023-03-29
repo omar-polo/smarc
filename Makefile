@@ -1,10 +1,11 @@
 MDIR =		${HOME}/Mail/gameoftrees
 OUTDIR =	/var/www/marc
+CSUMDIR =	${HOME}/.cache/gotmarc/threadsum
 
 .PHONY: all assets images dirs gzip clean scaleimgs
 
 all: assets
-	@env MDIR="${MDIR}" OUTDIR="${OUTDIR}" ./gotmarc
+	@env MDIR="${MDIR}" OUTDIR="${OUTDIR}" CSUMDIR="${CSUMDIR}" ./gotmarc
 
 assets: dirs images ${OUTDIR}/style.css
 
@@ -23,6 +24,7 @@ ${OUTDIR}/style.css: style.css
 	cp $? $@
 
 dirs:
+	@mkdir -p ${CSUMDIR}
 	@mkdir -p ${OUTDIR}/mail/
 	@mkdir -p ${OUTDIR}/parts/
 	@mkdir -p ${OUTDIR}/text/
