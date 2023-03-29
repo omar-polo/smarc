@@ -67,6 +67,7 @@ sub nextfile {
 
 	my $path;
 	($pfh, $path) = tempfile "/tmp/gotmarc.index.XXXXXXXXXX";
+	binmode($pfh, ':utf8');
 	push @files, $path;
 	say $pfh "<div class='thread'><ul>";
 }
