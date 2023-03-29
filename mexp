@@ -9,7 +9,6 @@ use utf8;
 use strict;
 use warnings;
 use v5.32;
-use File::Temp qw(tempfile);
 
 use OpenBSD::Pledge;
 use OpenBSD::Unveil;
@@ -23,12 +22,9 @@ die 'Set $OUTDIR' unless defined $outdir;
 unveil("/usr/local/bin/mshow", "rx") or die "unveil mshow: $!";
 unveil($outdir, "rwc") or die "unveil $outdir: $!";
 
-# can't use tmppath because File::Temp checks whether /tmp exists.
-unveil("/tmp", "rwc") or die "unveil /tmp: $!";
 unveil(".", "r") or die "unveil .: $!";
 
-# fattr for File::Temp
-pledge("stdio rpath wpath cpath proc exec fattr") or die "pledge: $!";
+pledge("stdio rpath wpath cpath proc exec") or die "pledge: $!";
 
 sub export_part {
 	my ($fh, $n, $fname) = @_;
@@ -103,7 +99,7 @@ while (<>) {
 	open(my $parts, '-|', 'mshow', '-t', $fname)
 	    or die "can't exec mshow: $!";
 
-	my $part_seen = 0;
+	my $partno = 0;
 	while (<$parts>) {
 		my ($n, $mime, $size, $name) =
 		    m/(\d+): ([^ ]+) size=(\d+) name="(.*)"/ or next;
@@ -128,25 +124,22 @@ while (<>) {
 
 		# text/* is bundled in the body by mshow(1).
 
-		if (!$part_seen) {
-			$part_seen = 1;
-			say $fh "<ul class='parts'>";
-		}
+		say $fh "<ul class='parts'>" if $partno == 0;
+		$partno++;
 
-		my ($p, $path) = tempfile "$outdir/parts/$mid.XXXXXXXXXX";
+		my $path = "$outdir/parts/$mid.$partno.$ext";
+		open my $p, '>', $path
+		    or die "can't open $fname: $!";
 		export_part($p, $n, $fname);
 		close($p);
-		rename $path, "$path.$ext"
-		    or die "can' rename $path as $path.ext";
-		chmod 0644, "$path.$ext";
 
 		$path =~ s,^.*/parts/,/parts/,;
 
-		my $url = san("$path.$ext");
+		my $url = san($path);
 		my $hs = humanize $size;
 		say $fh "<li><a href='$url'>$name ($hs)</a></li>";
 	}
-	say $fh "</ul>" if $part_seen;
+	say $fh "</ul>" if $partno > 0;
 
 	my $encmid = urlencode $mid;
 	my $enctid = urlencode $tid;
