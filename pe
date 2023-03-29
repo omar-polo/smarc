@@ -28,8 +28,7 @@ sub process {
 	print $handle $_ foreach @_;
 }
 
-unveil("./mexp", "rx") or die "unveil mexp: $!";
-pledge("stdio proc exec") or die "pledge: $!";
+pledge("stdio") or die "pledge: $!";
 
 my @thread;
 while (<>) {
