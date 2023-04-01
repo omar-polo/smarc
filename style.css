@@ -110,9 +110,9 @@ nav {
     text-align: center;
 }
 
-nav a {
+nav a, nav span {
     display: inline-block;
-    margin: 0 1rem;
+    margin: 0 .7rem;
 }
 
 footer {
