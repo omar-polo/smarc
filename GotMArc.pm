@@ -117,6 +117,6 @@ sub thread_header {
 	    if defined $encmid;
 
 	say $fh "</header>\n";
-};
+}
 
 1;
