@@ -38,13 +38,14 @@ sub ssan {
 }
 
 sub parse {
-	my ($indent, $fname, $date, $from, $subj) = m{
+	my $line = shift;
+	my ($indent, $fname, $date, $from, $subj) = $line =~ m{
 		^([^-]*)-			# the indent level
 		([^ ]+)\s			# filename
 		(\d{4}-\d\d-\d\d[ ]\d\d:\d\d)	# date
 		<([^>]+)>			# from
 		(.*)				# subject
-	}x or die "can't parse: $_";
+	}x or die "can't parse: $line";
 
 	my $level = length($indent);
 	$level = 10 if $indent =~ m/\.\.\d+\.\./;

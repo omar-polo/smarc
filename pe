@@ -60,8 +60,7 @@ sub process {
 
 	return unless @entries;
 
-	local $_ = $entries[0];
-	my $mail = parse;
+	my $mail = parse $entries[0];
 	die "wtf?" if $mail->{level} != 0;
 
 	my $tid = $mail->{mid};

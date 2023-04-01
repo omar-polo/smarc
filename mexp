@@ -58,7 +58,7 @@ sub humanize {
 
 my $tid;
 while (<>) {
-	my $mail = parse;
+	my $mail = parse $_;
 
 	$tid = $mail->{mid} if $mail->{level} == 0;
 	die "unknown tid" unless defined $tid;

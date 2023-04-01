@@ -186,7 +186,7 @@ pledge("stdio rpath wpath cpath fattr") or die "pledge: $!";
 nextfile;
 
 while (<>) {
-	my $mail = parse;
+	my $mail = parse $_;
 
 	if ($mail->{level} == 0) {
 		nextthread $mail->{mid}, $mail->{subj};
