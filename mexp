@@ -92,6 +92,60 @@ sub thrnav {
 	print $fh "</nav>";
 }
 
+sub min_level {
+	my $l = 999;
+	return 0 unless @_;
+	for (@_) {
+		$l = $_->{level} if $_->{level} < $l;
+	}
+	return $l;
+}
+
+sub threntry {
+	my ($fh, $base, $last_level, $cur, $mail) = @_;
+	my $level = $mail->{level} - $base;
+
+	say $fh "</ul></li>" x ($last_level - $level) if $last_level > $level;
+	say $fh "<li><ul>" if $last_level < $level;
+
+	my $encmid = urlencode $mail->{mid};
+
+	print $fh "<li id='$encmid' class='mail'>";
+	print $fh "<p class='mail-meta'>";
+	print $fh "<time>$mail->{date}</time> ";
+	print $fh "<span class='from'>$mail->{from}</span>";
+	print $fh "<span class='colon'>:</span>";
+	print $fh "</p>";
+	print $fh "<p class='subject'>";
+
+	my $subj = $mail->{subj};
+	if ($mail->{mid} ne $cur->{mid}) {
+		print $fh "<a href='/mail/$encmid.html'>$subj</a>";
+	} else {
+		print $fh "<span>$subj</span>";
+	}
+
+	print $fh "</p>";
+	print $fh "</li>\n";
+
+	return $level;
+}
+
+sub thrslice {
+	my ($fh, $mail, $p, $n) = @_;
+	my @prev = @{$p};
+	my @next = @{$n};
+	my @thread = (@prev, $mail, @next);
+	return unless @thread;
+	my $base = min_level @thread;
+	my $level = 0;
+	print $fh "<div class='thread'>";
+	print $fh "<ul class='mails'>";
+	$level = threntry $fh, $base, $level, $mail, $_ for @thread;
+	print $fh "</ul></li>" x $level;
+	print $fh "</ul></div>";
+}
+
 sub export_one {
 	my ($mail, $prev, $next) = @_;
 	my $dest = "$outdir/mail/$mail->{mid}.html";
@@ -118,7 +172,6 @@ sub export_one {
 	say $text "";
 
 	thread_header $fh, $mail->{tid}, $mail->{mid}, \@hdrs;
-	thrnav $fh, $prev, $next;
 
 	print $fh "<pre>";
 	while (<$mshow>) {
@@ -174,6 +227,7 @@ sub export_one {
 	say $fh "</ul>" if $partno > 0;
 
 	thrnav $fh, $prev, $next, $mail->{mid}, $mail->{tid};
+	thrslice $fh, $mail, $prev, $next;
 
 	endpage $fh;
 
@@ -190,8 +244,8 @@ sub export {
 
 	for (my $i = 0; $i < @thread; $i++) {
 		my (@prev, @next);
-		@prev = @thread[max($i-3, 0)..$i-1] if $i > 0;
-		@next = @thread[$i+1..min($i+3, @thread - 1)]
+		@prev = @thread[max($i-2, 0)..$i-1] if $i > 0;
+		@next = @thread[$i+1..min($i+2, @thread - 1)]
 		    if $i + 1 < @thread;
 		export_one $thread[$i], \@prev, \@next;
 	}

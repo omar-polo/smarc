@@ -67,6 +67,10 @@ hr {
     margin: 1rem 0;
 }
 
+.thread > p {
+    padding: 0 1rem;
+}
+
 .thread p {
     margin: 0;
 }
