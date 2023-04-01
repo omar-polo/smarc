@@ -55,7 +55,8 @@ sub parse {
 	my ($time, $id) = split /\./, basename($fname);
 	my $mid = "$time.$id";
 
-	return ($level, $fname, $mid, $date, $from, $subj);
+	return {level => $level, fname => $fname,
+	    mid => $mid, date => $date, from => $from, subj => $subj};
 }
 
 sub readall {

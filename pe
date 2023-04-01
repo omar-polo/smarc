@@ -61,10 +61,10 @@ sub process {
 	return unless @entries;
 
 	local $_ = $entries[0];
-	my ($level, $fname, $mid, $date, $from, $subj) = parse;
-	die "wtf?" if $level != 0;
+	my $mail = parse;
+	die "wtf?" if $mail->{level} != 0;
 
-	my $tid = $mid;
+	my $tid = $mail->{mid};
 	my $thrsum = thrsum @_;
 	my $oldsum = oldsum $tid;
 	return if $thrsum eq $oldsum;

@@ -186,10 +186,10 @@ pledge("stdio rpath wpath cpath fattr") or die "pledge: $!";
 nextfile;
 
 while (<>) {
-	my ($level, $fname, $mid, $date, $from, $subj) = parse;
+	my $mail = parse;
 
-	if ($level == 0) {
-		nextthread $mid, $subj;
+	if ($mail->{level} == 0) {
+		nextthread $mail->{mid}, $mail->{subj};
 
 		$threads++;
 		if ($threads > $threads_per_page) {
@@ -199,28 +199,29 @@ while (<>) {
 			$from_day = undef;
 		}
 
-		my $day = $date =~ s/ .*//r;
+		my $day = $mail->{date} =~ s/ .*//r;
 		$to_day = mins $day, $to_day;
 		$from_day = maxs $day, $from_day;
 	}
 
-	thread_entry $tfh, $mid, $level, $date, $from, $subj;
-	$last_level = $level;
+	thread_entry($tfh, $mail->{mid}, $mail->{level}, $mail->{date},
+	    $mail->{from}, $mail->{subj});
+	$last_level = $mail->{level};
 	$threads_seen = 1;
 
 	index_entry $pfh, $last_tid, $last_date, $last_from, $last_subj
-	    if defined $last_tid && $level == 0;
+	    if defined $last_tid && $mail->{level} == 0;
 
 	# `gt' on dates works because the format used allow for
 	# lexicographic comparisons.
-	if ($level == 0 || $date gt $last_date) {
-		$last_date = $date;
-		$last_from = $from;
+	if ($mail->{level} == 0 || $mail->{date} gt $last_date) {
+		$last_date = $mail->{date};
+		$last_from = $mail->{from};
 	}
 
-	if ($level == 0) {
-		$last_tid = $mid;
-		$last_subj = $subj;
+	if ($mail->{level} == 0) {
+		$last_tid = $mail->{mid};
+		$last_subj = $mail->{subj};
 	}
 }
 

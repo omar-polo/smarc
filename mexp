@@ -58,22 +58,22 @@ sub humanize {
 
 my $tid;
 while (<>) {
-	my ($level, $fname, $mid, $date, $from, $subj) = parse;
+	my $mail = parse;
 
-	$tid = $mid if $level == 0;
+	$tid = $mail->{mid} if $mail->{level} == 0;
 	die "unknown tid" unless defined $tid;
 
-	my $dest = "$outdir/mail/$mid.html";
+	my $dest = "$outdir/mail/$mail->{mid}.html";
 
 	open(my $fh, '>', "$dest") or die "can't open $dest: $!";
 
-	initpage $fh, $subj;
+	initpage $fh, $mail->{subj};
 
-	open(my $mshow, "-|", "mshow", "-nNA", "text/plain", $fname)
+	open(my $mshow, "-|", "mshow", "-nNA", "text/plain", $mail->{fname})
 	    or die "can't exec mshow: $!";
 
-	open(my $text, '>', "$outdir/text/$mid.txt")
-	    or die "can't open $outdir/text/$mid.txt: $!";
+	open(my $text, '>', "$outdir/text/$mail->{mid}.txt")
+	    or die "can't open $outdir/text/$mail->{mid}.txt: $!";
 
 	my @hdrs;
 	while (<$mshow>) {
@@ -86,7 +86,7 @@ while (<>) {
 	}
 	say $text "";
 
-	thread_header $fh, $tid, $mid, \@hdrs;
+	thread_header $fh, $tid, $mail->{mid}, \@hdrs;
 
 	print $fh "<pre>";
 	while (<$mshow>) {
@@ -96,7 +96,7 @@ while (<>) {
 	print $fh "</pre>";
 
 	# generate the listing for the exported parts
-	open(my $parts, '-|', 'mshow', '-t', $fname)
+	open(my $parts, '-|', 'mshow', '-t', $mail->{fname})
 	    or die "can't exec mshow: $!";
 
 	my $partno = 0;
@@ -127,10 +127,10 @@ while (<>) {
 		say $fh "<ul class='parts'>" if $partno == 0;
 		$partno++;
 
-		my $path = "$outdir/parts/$mid.$partno.$ext";
+		my $path = "$outdir/parts/$mail->{mid}.$partno.$ext";
 		open my $p, '>', $path
-		    or die "can't open $fname: $!";
-		export_part($p, $n, $fname);
+		    or die "can't open $mail->{fname}: $!";
+		export_part($p, $n, $mail->{fname});
 		close($p);
 
 		$path =~ s,^.*/parts/,/parts/,;
@@ -141,7 +141,7 @@ while (<>) {
 	}
 	say $fh "</ul>" if $partno > 0;
 
-	my $encmid = urlencode $mid;
+	my $encmid = urlencode $mail->{mid};
 	my $enctid = urlencode $tid;
 
 	print $fh "<nav>";
