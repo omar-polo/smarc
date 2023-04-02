@@ -16,7 +16,7 @@ use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
 use lib ".";
-use GotMArc qw(parse san urlencode initpage endpage thread_header);
+use GotMArc qw(parse san urlencode initpage endpage thread_header threntry);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
@@ -101,36 +101,6 @@ sub min_level {
 	return $l;
 }
 
-sub threntry {
-	my ($fh, $base, $last_level, $cur, $mail) = @_;
-	my $level = $mail->{level} - $base;
-
-	say $fh "</ul></li>" x ($last_level - $level) if $last_level > $level;
-	say $fh "<li><ul>" if $last_level < $level;
-
-	my $encmid = urlencode $mail->{mid};
-
-	print $fh "<li id='$encmid' class='mail'>";
-	print $fh "<p class='mail-meta'>";
-	print $fh "<time>$mail->{date}</time> ";
-	print $fh "<span class='from'>$mail->{from}</span>";
-	print $fh "<span class='colon'>:</span>";
-	print $fh "</p>";
-	print $fh "<p class='subject'>";
-
-	my $subj = $mail->{subj};
-	if ($mail->{mid} ne $cur->{mid}) {
-		print $fh "<a href='/mail/$encmid.html'>$subj</a>";
-	} else {
-		print $fh "<span>$subj</span>";
-	}
-
-	print $fh "</p>";
-	print $fh "</li>\n";
-
-	return $level;
-}
-
 sub thrslice {
 	my ($fh, $mail, $p, $n) = @_;
 	my @prev = @{$p};
@@ -141,7 +111,7 @@ sub thrslice {
 	my $level = 0;
 	print $fh "<div class='thread'>";
 	print $fh "<ul class='mails'>";
-	$level = threntry $fh, $base, $level, $mail, $_ for @thread;
+	$level = threntry $fh, "mail", $base, $level, $_, $mail for @thread;
 	print $fh "</ul></li>" x $level;
 	print $fh "</ul></div>";
 }

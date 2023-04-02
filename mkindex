@@ -15,7 +15,8 @@ use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
 use lib ".";
-use GotMArc qw(parse san urlencode initpage endpage index_header thread_header);
+use GotMArc qw(parse san urlencode initpage endpage index_header
+    thread_header threntry);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
@@ -143,35 +144,19 @@ sub nextthread {
 	print $tfh "<div class='thread'><ul class='mails'>\n";
 }
 
-sub entry {
-	my ($fh, $type, $mid, $date, $from, $subj) = @_;
-	my $encmid = urlencode $mid;
-
-	print $fh "<li id='$encmid' class='mail'>";
-	print $fh "<p class='mail-meta'>";
-	print $fh "<time>$date</time> ";
-	print $fh "<span class='from'>$from</span>";
-	print $fh "<span class='colon'>:</span>";
-	print $fh "</p>";
-	print $fh "<p class='subject'>";
-	print $fh "<a href='/$type/$encmid.html'>$subj</a>";
-	print $fh "</p>";
-	print $fh "</li>\n";
-}
-
 sub index_entry {
 	my ($fh, $mid, $date, $from, $subj) = @_;
 
-	entry $fh, "thread", $mid, $date, $from, $subj;
-}
+	# synthetic mail hash
+	my $mail = {
+		mid => $mid,
+		level => 0,
+		date => $date,
+		from => $from,
+		subj => $subj,
+	};
 
-sub thread_entry {
-	my ($fh, $mid, $level, $date, $from, $subj) = @_;
-
-	say $fh "</ul>\n</li>" x ($last_level - $level) if $last_level > $level;
-	say $fh "<li>\n<ul>" if $last_level < $level;
-
-	entry $fh, "mail", $mid, $date, $from, $subj;
+	threntry $fh, "thread", 0, 0, $mail;
 }
 
 unveil($outdir, "rwc") or die "unveil $outdir: $!";
@@ -204,9 +189,7 @@ while (<>) {
 		$from_day = maxs $day, $from_day;
 	}
 
-	thread_entry($tfh, $mail->{mid}, $mail->{level}, $mail->{date},
-	    $mail->{from}, $mail->{subj});
-	$last_level = $mail->{level};
+	$last_level = threntry $tfh, "mail", 0, $last_level, $mail;
 	$threads_seen = 1;
 
 	index_entry $pfh, $last_tid, $last_date, $last_from, $last_subj

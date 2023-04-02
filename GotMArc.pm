@@ -10,7 +10,8 @@ use Exporter;
 use File::Basename;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(san urlencode parse initpage endpage index_header thread_header);
+our @EXPORT_OK = qw(san urlencode parse initpage endpage index_header
+    thread_header threntry);
 
 sub san {
 	my $str = shift;
@@ -117,6 +118,36 @@ sub thread_header {
 	    if defined $encmid;
 
 	say $fh "</header>\n";
+}
+
+sub threntry {
+	my ($fh, $type, $base, $last_level, $mail, $cur) = @_;
+	my $level = $mail->{level} - $base;
+
+	say $fh "</ul></li>" x ($last_level - $level) if $last_level > $level;
+	say $fh "<li><ul>" if $last_level < $level;
+
+	my $encmid = urlencode $mail->{mid};
+
+	print $fh "<li id='$encmid' class='mail'>";
+	print $fh "<p class='mail-meta'>";
+	print $fh "<time>$mail->{date}</time> ";
+	print $fh "<span class='from'>$mail->{from}</span>";
+	print $fh "<span class='colon'>:</span>";
+	print $fh "</p>";
+	print $fh "<p class='subject'>";
+
+	my $subj = $mail->{subj};
+	if (!defined($cur) || $mail->{mid} ne $cur->{mid}) {
+		print $fh "<a href='/$type/$encmid.html'>$subj</a>";
+	} else {
+		print $fh "<span>$subj</span>";
+	}
+
+	print $fh "</p>";
+	print $fh "</li>";
+
+	return $level;
 }
 
 1;
