@@ -24,8 +24,6 @@ die 'Set $OUTDIR' unless defined $outdir;
 unveil("/usr/local/bin/mshow", "rx") or die "unveil mshow: $!";
 unveil($outdir, "rwc") or die "unveil $outdir: $!";
 
-unveil(".", "r") or die "unveil .: $!";
-
 pledge("stdio rpath wpath cpath proc exec") or die "pledge: $!";
 
 sub export_part {

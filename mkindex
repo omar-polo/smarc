@@ -160,7 +160,6 @@ sub index_entry {
 }
 
 unveil($outdir, "rwc") or die "unveil $outdir: $!";
-unveil(".", "r") or die "unveil .: $!";
 
 # can't use tmppath because File::Temp checks wether /tmp exists.
 unveil("/tmp", "rwc") or die "unveil /tmp: $!";
