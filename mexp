@@ -157,7 +157,7 @@ sub export_one {
 		my ($n, $mime, $size, $name) =
 		    m/(\d+): ([^ ]+) size=(\d+) name="(.*)"/ or next;
 
-		next if $mime =~ m(application/application/pgp-signature);
+		next if $mime =~ m(application/pgp-signature);
 		next if $mime =~ m(audio/*);
 		next if $mime =~ m(video/*);
 
