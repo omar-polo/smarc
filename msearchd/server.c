@@ -282,7 +282,7 @@ server_handle(struct env *env, struct client *clt)
 	uint64_t	 date;
 	time_t		 d;
 	struct tm	*tm;
-	int		 err;
+	int		 err, have_results = 0;
 
 	if ((query = server_getquery(clt)) != NULL &&
 	    fts_escape(query, esc, sizeof(esc)) != -1) {
@@ -349,6 +349,8 @@ server_handle(struct env *env, struct client *clt)
 			break;
 		}
 
+		have_results = 1;
+
 		mid = sqlite3_column_text(env->env_query, 0);
 		from = sqlite3_column_text(env->env_query, 1);
 		date = sqlite3_column_int64(env->env_query, 2);
@@ -387,6 +389,10 @@ server_handle(struct env *env, struct client *clt)
 	}
 
 	if (clt_puts(clt, "</ul></div>") == -1)
+		goto err;
+
+	if (!have_results &&
+	    clt_puts(clt, "<p class='notice'>No mail found.</p>") == -1)
 		goto err;
 
 done:
