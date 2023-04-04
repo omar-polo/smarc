@@ -18,7 +18,7 @@ use OpenBSD::Unveil;
 die "usage: $0 dbpath\n" if @ARGV != 1;
 my $dbpath = shift @ARGV;
 
-open(my $sqlite, "|-", "/usr/local/bin/sqlite3", "mails.sqlite")
+open(my $sqlite, "|-", "/usr/local/bin/sqlite3", $dbpath)
     or die "can't spawn sqlite3";
 
 unveil("/usr/local/bin/mshow", "rx") or die "unveil mshow: $!";
