@@ -20,9 +20,11 @@ PREFIX ?=	/usr/local
 SBINDIR ?=	${PREFIX}/sbin
 MANDIR ?=	${PREFIX}/man/man
 WWWDIR ?=	/var/www
+RCDIR ?=	/etc/rc.d/
 
 realinstall:
 	install -d -o root -g daemon -m 0755 ${DESTDIR}${WWWDIR}/msearchd
 	install -m 0755 ${PROG} ${DESTDIR}${SBINDIR}
+	install -m 0555 ${.CURDIR}/${PROG}.rc ${DESTDIR}${RCDIR}/${PROG}
 
 .include <bsd.prog.mk>
