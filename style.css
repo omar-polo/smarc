@@ -49,6 +49,11 @@ h1 {
     margin: 0 0 1rem 0;
 }
 
+summary {
+    cursor: pointer;
+    user-select: none;
+}
+
 form {
     text-align: center;
 }
