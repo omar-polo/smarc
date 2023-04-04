@@ -28,7 +28,6 @@ say $sqlite ".import --csv /dev/stdin email"
     or die "can't speak to sqlite: $!";
 
 while (<>) {
-	print; # continue the pipeline
 	chomp;
 
 	open(my $fh, "-|", "/usr/local/bin/mshow", "-Atext/plain", "-NF", $_)
