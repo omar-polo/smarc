@@ -13,13 +13,6 @@
   syntax.  Maybe turning also commit ids into links?
 
 
-- improve thread navigation
-
-  find a way to show links to previous/next messages in thread.  (yes,
-  *messages* since threads are trees there may be multiple next
-  messages)
-
-
 - show the original file name in the list of attachments.
 
   see for e.g. /mail/YSqwKz9bbMYM9fHW@benson.stsp.name.html
