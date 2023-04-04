@@ -1,0 +1,66 @@
+#!/usr/bin/env perl
+#
+# mimport was written by Omar Polo <op@openbsd.org> and is placed in the
+# public domain.  The author hereby disclaims copyright to this source
+# code.
+
+use strict;
+use warnings;
+use v5.32;
+use utf8;
+
+use Date::Parse;
+use File::Basename;
+
+use OpenBSD::Pledge;
+use OpenBSD::Unveil;
+
+die "usage: $0 dbpath\n" if @ARGV != 1;
+my $dbpath = shift @ARGV;
+
+open(my $sqlite, "|-", "/usr/local/bin/sqlite3", "mails.sqlite")
+    or die "can't spawn sqlite3";
+
+unveil("/usr/local/bin/mshow", "rx") or die "unveil mshow: $!";
+pledge("stdio proc exec") or die "pledge: $!";
+
+say $sqlite ".import --csv /dev/stdin email"
+    or die "can't speak to sqlite: $!";
+
+while (<>) {
+	chomp;
+
+	open(my $fh, "-|", "/usr/local/bin/mshow", "-Atext/plain", "-NF", $_)
+	    or die "can't run mshow $_: $!";
+
+	my $f = $_;
+	my ($time, $id) = split /\./, basename $_;
+	my $mid = "$time.$id";
+	$mid =~ s/"/""/g;
+
+	my ($from, $subj, $date) = ('', '', undef);
+	while (<$fh>) {
+		chomp;
+		last if /^$/;
+		s/"/""/g;
+		$from = s/.*?: //r if /^From:/;
+		$subj = s/.*?: //r if /^Subject:/;
+		$date = str2time(s/.*?: //r) if /^Date:/;
+	}
+	$date //= time;
+	$from =~ s/ +<.*>//;
+
+	# leave open for the body
+	print $sqlite "\"$mid\",\"$from\",\"$date\",\"$subj\",\"";
+
+	while (<$fh>) {
+		s/"/""/g;
+		print $sqlite $_;
+	}
+	say $sqlite '"';
+
+	close $fh;
+}
+
+close $sqlite;
+die "sqlite3 exited with $?\n" unless $? == 0;
