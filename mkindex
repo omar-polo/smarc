@@ -86,6 +86,17 @@ sub nav {
 	say $pfh "</nav>";
 }
 
+sub search {
+	my $pfh = shift;
+
+	say $pfh <<'EOF' ;
+<form method="get" action="/search">
+  <label>Search: <input type="search" name="q" /></label>
+  <button type="submit">search</button>
+</form>
+EOF
+}
+
 sub copyfrom {
 	my ($path, $fh) = @_;
 
@@ -114,6 +125,7 @@ sub renderpages {
 		say $pfh "<main>";
 
 		nav $pfh, $i if $page > 1;
+		search $pfh;
 		copyfrom($path, $pfh);
 		nav $pfh, $i if $page > 1;
 

@@ -104,6 +104,7 @@ sub thread_header {
 	print $fh "<a href='/'>Index</a>";
 	print $fh " | <a href='/thread/$enctid.html#$encmid'>Thread</a>"
 	    if defined $enctid;
+	print $fh " | <a href='/search'>Search</a>";
 	print $fh "</p>\n";
 
 	say $fh "<dl>";
