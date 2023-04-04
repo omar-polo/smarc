@@ -410,7 +410,7 @@ srch_syslog_warn(const char *fmt, ...)
 
 	errno = save_errno;
 
-	if (r > 0 && (size_t)r <= sizeof(s))
+	if (r > 0 && (size_t)r < sizeof(s))
 		syslog(LOG_DAEMON|LOG_ERR, "%s: %s", s, strerror(errno));
 
 	errno = save_errno;
