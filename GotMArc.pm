@@ -11,7 +11,7 @@ use File::Basename;
 
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(san urlencode parse initpage endpage index_header
-    thread_header threntry thrslice);
+    thread_header threntry thrslice thrnav);
 
 sub san {
 	my $str = shift;
@@ -180,6 +180,40 @@ sub thrslice {
 	$level = threntry $fh, "mail", $base, $level, $_, $mail for @thread;
 	print $fh "</ul></li>" x $level;
 	print $fh "</ul></div>";
+}
+
+sub thrnav {
+	my ($fh, $p, $n, $mid, $tid) = @_;
+	my @prev = @{$p};
+	my @next = @{$n};
+
+	return if !@prev && !@next;
+	print $fh "<nav>";
+
+	if (@prev) {
+		my $mail = $prev[-1];
+		my $encmid = $mail->{mid};
+		say $fh "<a href='/mail/$encmid.html'>Previous</a>";
+	} else {
+		say $fh "<span>Previous</span>";
+	}
+
+	if (defined($mid) && defined($tid)) {
+		my $encmid = urlencode $mid;
+		my $enctid = urlencode $tid;
+		say $fh "<a href='/text/$encmid.txt'>Raw body</a>";
+		say $fh "<a href='/thread/$enctid.html#$encmid'>Thread</a>";
+	}
+
+	if (@next) {
+		my $mail = $next[0];
+		my $encmid = $mail->{mid};
+		say $fh "<a href='/mail/$encmid.html'>Next</a>";
+	} else {
+		say $fh "<span>Next</span>";
+	}
+
+	print $fh "</nav>";
 }
 
 1;
