@@ -72,14 +72,14 @@ const struct logger dbglogger = {
 const struct logger *logger = &dbglogger;
 
 static void
-handle_sigchld(int sig)
+sighdlr(int sig)
 {
-	static volatile sig_atomic_t got_sigchld;
+	static volatile sig_atomic_t got_sig;
 	int	i, save_errno;
 
-	if (got_sigchld)
+	if (got_sig)
 		return;
-	got_sigchld = -1;
+	got_sig = -1;
 
 	save_errno = errno;
 	for (i = 0; i < children; ++i)
@@ -289,6 +289,8 @@ main(int argc, char **argv)
 
 		sigemptyset(&set);
 		sigaddset(&set, SIGCHLD);
+		sigaddset(&set, SIGINT);
+		sigaddset(&set, SIGTERM);
 		sigprocmask(SIG_BLOCK, &set, NULL);
 
 		ret = snprintf(sockp, sizeof(sockp), "%s/%s", root, sock);
@@ -307,7 +309,9 @@ main(int argc, char **argv)
 			    (long long)pids[i]);
 		}
 
-		signal(SIGCHLD, handle_sigchld);
+		signal(SIGINT, sighdlr);
+		signal(SIGTERM, sighdlr);
+		signal(SIGCHLD, sighdlr);
 		signal(SIGHUP, SIG_IGN);
 
 		sigprocmask(SIG_UNBLOCK, &set, NULL);
