@@ -285,7 +285,8 @@ server_handle(struct env *env, struct client *clt)
 	int		 err, have_results = 0;
 
 	if ((query = server_getquery(clt)) != NULL &&
-	    fts_escape(query, esc, sizeof(esc)) != -1) {
+	    fts_escape(query, esc, sizeof(esc)) != -1 &&
+	    *esc != '\0') {
 		log_debug("searching for %s", esc);
 
 		err = sqlite3_bind_text(env->env_query, 1, esc, -1, NULL);
@@ -297,7 +298,8 @@ server_handle(struct env *env, struct client *clt)
 				return (-1);
 			return (fcgi_end_request(clt, 1));
 		}
-	}
+	} else
+		query = NULL;
 
 	if (server_reply(clt, 200, "text/html") == -1)
 		goto err;
