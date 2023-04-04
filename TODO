@@ -24,3 +24,10 @@
   new reply it'll jump in the first page.  The date ranges thus can
   jump quite a bit when navigating backward/forward.  Is this OK?  Can
   we communicate it better?
+
+
+- use UTC consistently
+
+  msearchd uses UTC, while the rest of the UI uses the localtime of the
+  sender.  In the mail page it is fine since we show the zone offset too
+  but the index pages don't show that!
