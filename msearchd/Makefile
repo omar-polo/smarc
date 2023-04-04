@@ -1,7 +1,7 @@
 PROG =		msearchd
 SRCS =		msearchd.c fcgi.c server.c
 
-DEBUG =		-O0 -g -DDEBUG
+#DEBUG =	-O0 -g -DDEBUG
 
 CDIAGFLAGS =	-Wall -Wuninitialized -Wshadow -Wunused
 CDIAGFLAGS +=	-Wmissing-prototypes -Wstrict-prototypes
