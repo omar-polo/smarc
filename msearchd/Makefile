@@ -7,7 +7,6 @@ CDIAGFLAGS =	-Wall -Wuninitialized -Wshadow -Wunused
 CDIAGFLAGS +=	-Wmissing-prototypes -Wstrict-prototypes
 CDIAGFLAGS +=	-Werror
 
-CPPFLAGS +=	-I${.CURDIR}/template
 CPPFLAGS +=	-I/usr/local/include
 
 LIBSQLITE3 =	/usr/local/lib/libsqlite3.a
