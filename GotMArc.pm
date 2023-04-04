@@ -91,8 +91,7 @@ sub index_header {
 }
 
 sub thread_header {
-	my ($fh, $e, $mail, $p, $n, $spoiler) = @_;
-	$spoiler = 0 unless defined $spoiler;
+	my ($fh, $e, $mail, $p, $n) = @_;
 
 	my @entries = @$e;
 
@@ -120,10 +119,13 @@ sub thread_header {
 	say $fh "<p>Download raw <a href='/text/$encmid.txt'>body</a>.</p>"
 	    if defined $encmid;
 
-	say $fh "<details>" if $spoiler;
-	say $fh "<summary>Thread</summary>" if $spoiler;
-	thrslice($fh, $mail, $p, $n) if defined $p and defined $n;
-	say $fh "</details>" if $spoiler;
+	if (defined($p) and defined($n)) {
+		say $fh "<details>";
+		say $fh "<summary>Thread</summary>";
+		thrslice($fh, $mail, $p, $n);
+		say $fh "</details>";
+		thrnav($fh, $p, $n, $mail->{mid}, $mail->{tid});
+	}
 
 	say $fh "</header>\n";
 }

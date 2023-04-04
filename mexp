@@ -82,7 +82,7 @@ sub export_one {
 	}
 	say $text "";
 
-	thread_header $fh, \@hdrs, $mail, $prev, $next, 1;
+	thread_header $fh, \@hdrs, $mail, $prev, $next;
 
 	print $fh "<pre>";
 	while (<$mshow>) {
