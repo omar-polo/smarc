@@ -149,7 +149,7 @@ bind_socket(const char *path, struct passwd *pw)
 
 static pid_t
 start_child(const char *argv0, const char *root, const char *user,
-    const char *db, int debug, int verobes, int fd)
+    const char *db, int debug, int verbose, int fd)
 {
 	const char	*argv[11];
 	int		 argc = 0;

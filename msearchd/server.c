@@ -24,6 +24,7 @@ void		 server_open_db(struct env *);
 void		 server_close_db(struct env *);
 __dead void	 server_shutdown(struct env *);
 int		 server_reply(struct client *, int, const char *);
+int		 server_urldecode(char *);
 char		*server_getquery(struct client *);
 
 void
@@ -178,7 +179,6 @@ int
 server_urldecode(char *s)
 {
 	unsigned int	 x;
-	size_t		 n;
 	char		*q, code[3] = {0};
 
 	q = s;

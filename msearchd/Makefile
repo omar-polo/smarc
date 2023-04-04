@@ -4,9 +4,11 @@ MAN =		msearchd.8
 
 #DEBUG =	-O0 -g -DDEBUG
 
-CDIAGFLAGS =	-Wall -Wuninitialized -Wshadow -Wunused
+CDIAGFLAGS =	-Wall -Wuninitialized -Wunused
 CDIAGFLAGS +=	-Wmissing-prototypes -Wstrict-prototypes
 CDIAGFLAGS +=	-Werror
+
+WARNINGS =	Yes
 
 CPPFLAGS +=	-I/usr/local/include
 
