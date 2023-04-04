@@ -11,7 +11,7 @@ use File::Basename;
 
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(san urlencode parse initpage endpage index_header
-    thread_header threntry);
+    thread_header threntry thrslice);
 
 sub san {
 	my $str = shift;
@@ -91,11 +91,13 @@ sub index_header {
 }
 
 sub thread_header {
-	my ($fh, $tid, $mid, $e) = @_;
+	my ($fh, $e, $mail, $p, $n, $spoiler) = @_;
+	$spoiler = 0 unless defined $spoiler;
+
 	my @entries = @$e;
 
-	my $enctid = urlencode $tid if defined $tid;
-	my $encmid = urlencode $mid if defined $mid;
+	my $enctid = urlencode $mail->{tid} if defined $mail;
+	my $encmid = urlencode $mail->{mid} if defined $mail;
 
 	print $fh "<header class='mail-header'>\n";
 
@@ -117,6 +119,11 @@ sub thread_header {
 
 	say $fh "<p>Download raw <a href='/text/$encmid.txt'>body</a>.</p>"
 	    if defined $encmid;
+
+	say $fh "<details>" if $spoiler;
+	say $fh "<summary>Thread</summary>" if $spoiler;
+	thrslice($fh, $mail, $p, $n) if defined $p and defined $n;
+	say $fh "</details>" if $spoiler;
 
 	say $fh "</header>\n";
 }
@@ -149,6 +156,30 @@ sub threntry {
 	print $fh "</li>";
 
 	return $level;
+}
+
+sub min_level {
+	my $l = 999;
+	return 0 unless @_;
+	for (@_) {
+		$l = $_->{level} if $_->{level} < $l;
+	}
+	return $l;
+}
+
+sub thrslice {
+	my ($fh, $mail, $p, $n) = @_;
+	my @prev = @{$p};
+	my @next = @{$n};
+	my @thread = (@prev, $mail, @next);
+	return unless @thread;
+	my $base = min_level @thread;
+	my $level = 0;
+	print $fh "<div class='thread'>";
+	print $fh "<ul class='mails'>";
+	$level = threntry $fh, "mail", $base, $level, $_, $mail for @thread;
+	print $fh "</ul></li>" x $level;
+	print $fh "</ul></div>";
 }
 
 1;

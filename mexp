@@ -16,7 +16,8 @@ use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
 use lib ".";
-use GotMArc qw(parse san urlencode initpage endpage thread_header threntry);
+use GotMArc qw(parse san urlencode initpage endpage thread_header
+    threntry thrslice);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
@@ -90,30 +91,6 @@ sub thrnav {
 	print $fh "</nav>";
 }
 
-sub min_level {
-	my $l = 999;
-	return 0 unless @_;
-	for (@_) {
-		$l = $_->{level} if $_->{level} < $l;
-	}
-	return $l;
-}
-
-sub thrslice {
-	my ($fh, $mail, $p, $n) = @_;
-	my @prev = @{$p};
-	my @next = @{$n};
-	my @thread = (@prev, $mail, @next);
-	return unless @thread;
-	my $base = min_level @thread;
-	my $level = 0;
-	print $fh "<div class='thread'>";
-	print $fh "<ul class='mails'>";
-	$level = threntry $fh, "mail", $base, $level, $_, $mail for @thread;
-	print $fh "</ul></li>" x $level;
-	print $fh "</ul></div>";
-}
-
 sub export_one {
 	my ($mail, $prev, $next) = @_;
 	my $dest = "$outdir/mail/$mail->{mid}.html";
@@ -139,7 +116,7 @@ sub export_one {
 	}
 	say $text "";
 
-	thread_header $fh, $mail->{tid}, $mail->{mid}, \@hdrs;
+	thread_header $fh, \@hdrs, $mail, $prev, $next, 1;
 
 	print $fh "<pre>";
 	while (<$mshow>) {

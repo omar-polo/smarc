@@ -152,7 +152,7 @@ sub nextthread {
 	my $dest = "$outdir/thread/$mid.html";
 	open($tfh, '>', $dest) or die "can't open $dest: $!";
 	initpage($tfh, $subj);
-	thread_header $tfh, undef, undef, ["Thread: $subj"];
+	thread_header $tfh, ["Thread: $subj"];
 	print $tfh "<div class='thread'><ul class='mails'>\n";
 }
 
