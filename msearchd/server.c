@@ -321,7 +321,10 @@ server_handle(struct env *env, struct client *clt)
 	    "</header>") == -1)
 		goto err;
 
-	if (clt_puts(clt, "<form method='get'>"
+	if (clt_puts(clt, "<nav>"
+	    "<a href='/'>Index</a>"
+	    "</nav>"
+	    "<form method='get'>"
 	    "<label>Search: "
 	    "<input type='search' name='q' value='") == -1 ||
 	    clt_putsan(clt, query) == -1 ||
