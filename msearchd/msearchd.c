@@ -284,6 +284,12 @@ main(int argc, char **argv)
 	if (root == NULL)
 		root = pw->pw_dir;
 
+	if (!debug)
+		logger = &syslogger;
+
+	if (!debug && !server && daemon(1, 0) == -1)
+		fatal("daemon");
+
 	if (!server) {
 		sigset_t set;
 
@@ -327,14 +333,8 @@ main(int argc, char **argv)
 	    setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1)
 		fatal("failed to drop privileges");
 
-	if (!debug)
-		logger = &syslogger;
-
 	if (server)
 		return (server_main(db));
-
-	if (!debug && daemon(1, 0) == -1)
-		fatal("daemon");
 
 	if (pledge("stdio proc", NULL) == -1)
 		fatal("pledge");
