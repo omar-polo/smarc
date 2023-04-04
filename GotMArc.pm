@@ -185,7 +185,7 @@ sub thrslice {
 }
 
 sub thrnav {
-	my ($fh, $p, $n, $mid, $tid) = @_;
+	my ($fh, $p, $n) = @_;
 	my @prev = @{$p};
 	my @next = @{$n};
 
@@ -195,24 +195,17 @@ sub thrnav {
 	if (@prev) {
 		my $mail = $prev[-1];
 		my $encmid = $mail->{mid};
-		say $fh "<a href='/mail/$encmid.html'>Previous</a>";
+		say $fh "<a href='/mail/$encmid.html'>Previous in thread</a>";
 	} else {
-		say $fh "<span>Previous</span>";
-	}
-
-	if (defined($mid) && defined($tid)) {
-		my $encmid = urlencode $mid;
-		my $enctid = urlencode $tid;
-		say $fh "<a href='/text/$encmid.txt'>Raw body</a>";
-		say $fh "<a href='/thread/$enctid.html#$encmid'>Thread</a>";
+		say $fh "<span>Previous in thread</span>";
 	}
 
 	if (@next) {
 		my $mail = $next[0];
 		my $encmid = $mail->{mid};
-		say $fh "<a href='/mail/$encmid.html'>Next</a>";
+		say $fh "<a href='/mail/$encmid.html'>Next in thread</a>";
 	} else {
-		say $fh "<span>Next</span>";
+		say $fh "<span>Next in thread</span>";
 	}
 
 	print $fh "</nav>";

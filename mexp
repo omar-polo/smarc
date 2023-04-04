@@ -137,7 +137,7 @@ sub export_one {
 	}
 	say $fh "</ul>" if $partno > 0;
 
-	thrnav $fh, $prev, $next, $mail->{mid}, $mail->{tid};
+	thrnav $fh, $prev, $next;
 	thrslice $fh, $mail, $prev, $next;
 
 	endpage $fh;
