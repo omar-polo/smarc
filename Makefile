@@ -1,13 +1,8 @@
-MDIR =		${HOME}/Mail/gameoftrees
 OUTDIR =	/var/www/marc
-CSUMDIR =	${HOME}/.cache/gotmarc/threadsum
 
-.PHONY: all assets images dirs gzip clean scaleimgs
+.PHONY: all images dirs gzip scaleimgs
 
-all: assets
-	@env MDIR="${MDIR}" OUTDIR="${OUTDIR}" CSUMDIR="${CSUMDIR}" ./gotmarc
-
-assets: dirs images ${OUTDIR}/style.css
+all: dirs images ${OUTDIR}/style.css
 
 images: ${OUTDIR}/got@2x.png ${OUTDIR}/got.png ${OUTDIR}/got-tiny@2x.png \
 	${OUTDIR}/got-tiny.png
@@ -24,7 +19,6 @@ ${OUTDIR}/style.css: style.css
 	cp $? $@
 
 dirs:
-	@mkdir -p ${CSUMDIR}
 	@mkdir -p ${OUTDIR}/mail/
 	@mkdir -p ${OUTDIR}/parts/
 	@mkdir -p ${OUTDIR}/text/
@@ -32,11 +26,6 @@ dirs:
 
 gzip:
 	gzip -fkr ${OUTDIR}
-
-clean:
-	rm -rf ${OUTDIR}
-
-# -- maintainer targets --
 
 scaleimgs:
 	convert images/got.orig.png -resize 200x200 images/got.png
