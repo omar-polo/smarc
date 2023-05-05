@@ -106,7 +106,7 @@ sub renderpages {
 		open(my $pfh, '>', $dest)
 		    or die "can't open $dest for writing: $!";
 
-		my $title = "Game of Trees Mail Archive | page $i";
+		my $title = "page $i";
 		my $subtitle = $pages[$i-1];
 
 		initpage($pfh, $title);
