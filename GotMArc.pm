@@ -11,7 +11,7 @@ use File::Basename;
 
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(san urlencode parse initpage endpage index_header
-    thread_header threntry thrslice thrnav);
+    search thread_header threntry thrslice thrnav);
 
 sub san {
 	my $str = shift;
@@ -75,6 +75,7 @@ my $small_logo = readall "$templates/logo-small.html";
 my $hdr = readall "$templates/head.html";
 my $foot = readall "$templates/foot.html";
 my $idxhdr = readall "$templates/index-header.html";
+my $search = readall "$templates/search.html";
 
 sub initpage {
 	my ($fh, $title) = @_;
@@ -90,6 +91,12 @@ sub index_header {
 	my ($fh, $page, $subtitle) = @_;
 	my $html = $idxhdr =~ s/PAGE/$page/r;
 	$html =~ s/SUBTITLE/$subtitle/;
+	print $fh $html;
+}
+
+sub search {
+	my $fh = shift;
+	my $html = $search =~ s/QUERY//r;
 	print $fh $html;
 }
 

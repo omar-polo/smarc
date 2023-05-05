@@ -16,7 +16,7 @@ use OpenBSD::Unveil;
 
 use lib ".";
 use GotMArc qw(parse san urlencode initpage endpage index_header
-    thread_header threntry);
+    search thread_header threntry);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
@@ -84,17 +84,6 @@ sub nav {
 	say $pfh "<a href='$next'>Next</a>" if $n < $page;
 	say $pfh "<a href='$last'>Last</a>" if $n < $page - 1;
 	say $pfh "</nav>";
-}
-
-sub search {
-	my $pfh = shift;
-
-	say $pfh <<'EOF' ;
-<form method="get" action="/search">
-  <label>Search: <input type="search" name="q" /></label>
-  <button type="submit">search</button>
-</form>
-EOF
 }
 
 sub copyfrom {
