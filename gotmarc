@@ -6,20 +6,20 @@
 
 progname="$(basename "$0")"
 usage() {
-	echo "usage: $progname [-c csumdir] [-j n] [-m maildir] [-o outdir]" >&2
+	echo "usage: $progname [-c cachedir] [-j n] [-m maildir] [-o outdir]">&2
 	exit 1
 }
 
 libexec=.
 mblaze=.mblaze
 
-csumdir=$HOME/.cache/gotmarc/threadsum
-mdir=$HOME/Mail/gameoftrees
-outdir=/var/www/marc
+cachedir=$HOME/.cache/gotmarc
+mdir=$HOME/Mail/gotmarc
+outdir=/var/www/gotmarc
 
 while getopts c:j:m:o: flag; do
 	case $flag in
-	c) csumdir="$OPTARG" ;;
+	c) cachedir="$OPTARG" ;;
 	j) MAKE_JOBS="$OPTARG" ;;
 	m) mdir="$OPTARG" ;;
 	o) outdir="$OPTARG" ;;
@@ -28,20 +28,20 @@ while getopts c:j:m:o: flag; do
 done
 
 # set up the env
-export CSUMDIR="$csumdir"
+export CSUMDIR="$cachedir/threadsum"
 export MAKE_JOBS="${MAKE_JOBS:-1}"
 export MBLAZE="$mblaze"
 export MBLAZE_PAGER=cat
 export MDIR="$mdir"
-export OUTDIR="${OUTDIR:-/var/www/marc}"
+export OUTDIR="${outdir:-/var/www/gotmarc}"
 
 # make sure the directories are there
 set -e
-mkdir -p "$csumdir"
-mkdir -p "$outdir/mail"
-mkdir -p "$outdir/parts"
-mkdir -p "$outdir/text"
-mkdir -p "$outdir/thread"
+mkdir -p "$CSUMDIR"
+mkdir -p "$OUTDIR/mail"
+mkdir -p "$OUTDIR/parts"
+mkdir -p "$OUTDIR/text"
+mkdir -p "$OUTDIR/thread"
 set +e
 
 export PATH="$libexec:$PATH"
