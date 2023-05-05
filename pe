@@ -26,7 +26,7 @@ die '$CSUMDIR undefined' unless defined $csumdir;
 
 my $poll = IO::Poll->new();
 for (1..$jobs) {
-	open(my $kid, '|-', './mexp') or die "can't exec ./mexp: $!";
+	open(my $kid, '|-', 'mexp') or die "can't exec mexp: $!";
 	$poll->mask($kid => POLLOUT);
 }
 
