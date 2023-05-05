@@ -1,5 +1,5 @@
 #: text/* is already handled by mshow(1).
 application: ./filter-ignore
-audio: ./filter-ignore
-image: ./filter-ignore
-video: ./filter-ignore
+audio: filter-ignore
+image: filter-ignore
+video: filter-ignore
