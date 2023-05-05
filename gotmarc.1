@@ -1,0 +1,65 @@
+.\" gotmarc.1 was written by Omar Polo <op@openbsd.org> and is placed in
+.\" the public domain.  The author hereby disclaims copyright to this
+.\" source code.
+.Dd May 5, 2023
+.Dt GOTMARC 1
+.Os
+.Sh NAME
+.Nm gotmarc
+.Nd mailing list static site generator
+.Sh SYNOPSIS
+.Nm
+.Op Fl c Ar cachedir
+.Op Fl j Ar n
+.Op Fl m Ar maildir
+.Op Fl o Ar outdir
+.Sh DESCRIPTION
+.Nm
+generates a static web archive from a maildir incrementally.
+.Pp
+The arguments are as follows:
+.Bl -tag -width Ds
+.It Fl c Ar cachedir
+Cache directory used for keeping track of threads during incremental
+updates.
+Defaults to
+.Pa ~/.cache/gotmarc
+.It Fl j Ar n
+Use
+.Ar n
+jobs to export threads.
+With big mailing lists and on a multiprocessor machine this can save
+quite some time.
+.It Fl m Ar maildir
+Source
+.Ar maildir .
+Defaults to
+.Pa ~/Mail/gotmarc .
+.It Fl o Ar outdir
+The destination directory where the HTML files will be written to, it's
+.Pa /var/www/gotmarc
+by default.
+.El
+.Sh FILES
+.Bl -tag -compact -width ~/.cache/gotmarc
+.It Pa /var/www/gotmarc
+Default output directory.
+.It Pa ~/.cache/gotmarc
+Default cache directory.
+.It Pa ~/Mail/gotmarc
+Default maildir.
+.El
+.Sh SEE ALSO
+.Xr gotmarc 7
+.Sh HISTORY
+.Nm
+started as a hacky collection of perl scripts to generate a web archive
+for the Game of Trees mailing list.
+Only later it was converted to be a usable generic web mailing list
+archive tool.
+.Sh AUTHORS
+.An -nosplit
+The
+.Nm
+utility was written by
+.An Omar Polo Aq Mt op@openbsd.org .
