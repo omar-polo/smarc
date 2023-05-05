@@ -13,6 +13,7 @@
 .Op Fl j Ar n
 .Op Fl m Ar maildir
 .Op Fl o Ar outdir
+.Op Fl t Ar tmpldir
 .Sh DESCRIPTION
 .Nm
 generates a static web archive from a maildir incrementally.
@@ -39,9 +40,27 @@ Defaults to
 The destination directory where the HTML files will be written to, it's
 .Pa /var/www/gotmarc
 by default.
+.It Fl t Ar tmpldir
+Path to a directory containing the template files.
+.Pa /etc/gotmarc
+by default.
 .El
 .Sh FILES
-.Bl -tag -compact -width ~/.cache/gotmarc
+.Bl -tag -width Ds
+.It Pa /etc/gotmarc/foot.html
+Template with the trailing part of the page.
+.It Pa /etc/gotmarc/head.html
+Template with the first part of the page.
+.Dv TITLE
+is substituted with the title.
+.It Pa /etc/gotmarc/index-header.html
+Template with the title for index pages.
+.Dv PAGE
+is replaced with the page number and
+.Dv SUBTITLE
+with the date range.
+.It Pa /etc/gotmarc/logo-small.html
+Small version of the logo, included in the thread header.
 .It Pa /var/www/gotmarc
 Default output directory.
 .It Pa ~/.cache/gotmarc

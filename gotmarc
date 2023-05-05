@@ -6,23 +6,27 @@
 
 progname="$(basename "$0")"
 usage() {
-	echo "usage: $progname [-c cachedir] [-j n] [-m maildir] [-o outdir]">&2
+	u="usage: $progname [-c cachedir] [-j n]"
+	u="$u [-m maildir] [-o outdir] [-t tmpldir]"
+	echo "$u">&2
 	exit 1
 }
 
 libexec=.
 mblaze=.mblaze
+tmpldir=templates/
 
 cachedir=$HOME/.cache/gotmarc
 mdir=$HOME/Mail/gotmarc
 outdir=/var/www/gotmarc
 
-while getopts c:j:m:o: flag; do
+while getopts c:j:m:o:t: flag; do
 	case $flag in
 	c) cachedir="$OPTARG" ;;
 	j) MAKE_JOBS="$OPTARG" ;;
 	m) mdir="$OPTARG" ;;
 	o) outdir="$OPTARG" ;;
+	t) tmpldir="$OPTARG" ;;
 	?) usage ;;
 	esac
 done
@@ -34,6 +38,7 @@ export MBLAZE="$mblaze"
 export MBLAZE_PAGER=cat
 export MDIR="$mdir"
 export OUTDIR="${outdir:-/var/www/gotmarc}"
+export TMPLDIR="$tmpldir"
 
 # make sure the directories are there
 set -e

@@ -68,10 +68,13 @@ sub readall {
 	<$fh>;
 }
 
-my $small_logo = readall "templates/logo-small.html";
-my $hdr = readall "templates/head.html";
-my $foot = readall "templates/foot.html";
-my $idxhdr = readall "templates/index-header.html";
+my $templates = $ENV{TMPLDIR};
+die 'undefined $TMPLDIR' unless defined $templates;
+
+my $small_logo = readall "$templates/logo-small.html";
+my $hdr = readall "$templates/head.html";
+my $foot = readall "$templates/foot.html";
+my $idxhdr = readall "$templates/index-header.html";
 
 sub initpage {
 	my ($fh, $title) = @_;
