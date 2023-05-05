@@ -11,6 +11,7 @@
 .Op Fl j Ar n
 .Op Fl p Ar path
 .Op Fl s Ar socket
+.Op Fl t Ar tmpldir
 .Op Fl u Ar user
 .Op Ar db
 .Sh DESCRIPTION
@@ -59,6 +60,10 @@ effectively disables the chroot.
 .It Fl s Ar socket
 Create an bind to the local socket at
 .Ar socket .
+.It Fl t Ar tmpldir
+Path to a directory containing the template files.
+.Pa /etc/gotmarc
+by default.
 .It Fl u Ar user
 Drop privileges to
 .Ar user
@@ -72,7 +77,20 @@ Multiple
 options increase the verbosity.
 .El
 .Sh FILES
-.Bl -tag -width /var/www/msearchd/mails.sqlite3 -compact
+.Bl -tag -width Ds
+.It Pa /etc/gotmarc/foot.html
+Template with the trailing part of the page.
+.It Pa /etc/gotmarc/head.html
+Template with the first part of the page.
+.Dv TITLE
+is replaced with
+.Dq Search .
+.It Pa /etc/gotmarc/search-header.html
+Template for the start of the search page.
+.It Pa /etc/gotmarc/search.html
+Template for the search form.
+.Dv QUERY
+is replaced with the search query.
 .It Pa /var/www/msearchd/mails.sqite3
 Default database.
 .It Pa /var/www/run/msearchd.sock

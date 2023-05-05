@@ -272,6 +272,27 @@ fts_escape(const char *p, char *buf, size_t bufsize)
 	return (-1);
 }
 
+static int
+render_tmpl(struct client *clt, const char *tmpl,
+    const char *var, const char *val)
+{
+	const char	*t;
+	size_t		 vlen;
+
+	if (var == NULL)
+		return (clt_puts(clt, tmpl));
+
+	vlen = strlen(var);
+	while ((t = strstr(tmpl, var)) != NULL) {
+		if (clt_write(clt, tmpl, t - tmpl) == -1 ||
+		    clt_putsan(clt, val) == -1)
+			return (-1);
+		tmpl = t + vlen;
+	}
+
+	return (clt_puts(clt, tmpl));
+}
+
 int
 server_handle(struct env *env, struct client *clt)
 {
@@ -304,35 +325,9 @@ server_handle(struct env *env, struct client *clt)
 	if (server_reply(clt, 200, "text/html") == -1)
 		goto err;
 
-	if (clt_puts(clt, "<!doctype html>"
-	    "<html>"
-	    "<head>"
-	    "<meta charset='utf-8'>"
-	    "<meta name='viewport' content='width=device-width'>"
-	    "<link rel='stylesheet' href='/style.css'>"
-	    "<title>Game of Trees Mail Archive | Search</title>"
-	    "</head>"
-	    "<body>"
-	    "<header class='index-header'>"
-	    "<a href='https://gameoftrees.org' target='_blank'>"
-	    "<img src='/got.png' srcset='/got.png, /got@2x.png 2x'"
-	    "     alt='\"GOT\" where the \"O\" is a cute, smiling pufferfish'"
-	    "     />"
-	    "</a>"
-	    "<h1>Game of Trees Mail Archive</h1>"
-	    "</header>") == -1)
-		goto err;
-
-	if (clt_puts(clt, "<nav>"
-	    "<a href='/'>Index</a>"
-	    "</nav>"
-	    "<form method='get'>"
-	    "<label>Search: "
-	    "<input type='search' name='q' value='") == -1 ||
-	    clt_putsan(clt, query) == -1 ||
-	    clt_puts(clt, "'/></label>"
-	    " <button type='submit'>search</button>"
-	    "</form>") == -1)
+	if (render_tmpl(clt, tmpl_head, "TITLE", "Search") == -1 ||
+	    render_tmpl(clt, tmpl_search_header, NULL, NULL) == -1 ||
+	    render_tmpl(clt, tmpl_search, "QUERY", query) == -1)
 		goto err;
 
 	if (query == NULL)
@@ -398,7 +393,7 @@ server_handle(struct env *env, struct client *clt)
 		goto err;
 
 done:
-	if (clt_puts(clt, "</body></html>\n") == -1)
+	if (render_tmpl(clt, tmpl_foot, NULL, NULL) == -1)
 		goto err;
 
 	sqlite3_reset(env->env_query);

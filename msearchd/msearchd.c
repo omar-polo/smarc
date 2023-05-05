@@ -37,12 +37,21 @@
 #define MSEARCHD_USER "www"
 #endif
 
+#ifndef MSEARCH_TMPL_DIR
+#define MSEARCH_TMPL_DIR "/etc/gotmarc"
+#endif
+
 #define MAX_CHILDREN 32
 
 int	debug;
 int	verbose;
 int	children = 3;
 pid_t	pids[MAX_CHILDREN];
+
+const char	*tmpl_head;
+const char	*tmpl_search;
+const char	*tmpl_search_header;
+const char	*tmpl_foot;
 
 __dead void	srch_syslog_fatal(int, const char *, ...);
 __dead void	srch_syslog_fatalx(int, const char *, ...);
@@ -85,6 +94,40 @@ sighdlr(int sig)
 	for (i = 0; i < children; ++i)
 		(void)kill(pids[i], SIGTERM);
 	errno = save_errno;
+}
+
+static void
+load_tmpl(const char **ret, const char *dir, const char *name)
+{
+	FILE		*fp;
+	struct stat	 sb;
+	char		*t;
+	char		 path[PATH_MAX];
+	int		 r;
+
+	r = snprintf(path, sizeof(path), "%s/%s", dir, name);
+	if (r < 0 || (size_t)r >= sizeof(path))
+		fatalx("path too long: %s/%s", dir, name);
+
+	if ((fp = fopen(path, "r")) == NULL)
+		fatal("can't open %s", path);
+
+	if (fstat(fileno(fp), &sb) == -1)
+		fatal("fstat");
+
+	if (sb.st_size > SIZE_MAX)
+		fatal("file too big %s", path);
+
+	if ((t = malloc(sb.st_size + 1)) == NULL)
+		fatal("malloc");
+
+	if (fread(t, 1, sb.st_size, fp) != sb.st_size)
+		fatal("fread %s", path);
+
+	fclose(fp);
+
+	t[sb.st_size] = '\0';
+	*ret = t;
 }
 
 static int
@@ -149,9 +192,9 @@ bind_socket(const char *path, struct passwd *pw)
 
 static pid_t
 start_child(const char *argv0, const char *root, const char *user,
-    const char *db, int debug, int verbose, int fd)
+    const char *db, const char *tmpl, int debug, int verbose, int fd)
 {
-	const char	*argv[11];
+	const char	*argv[13];
 	int		 argc = 0;
 	pid_t		 pid;
 
@@ -174,6 +217,7 @@ start_child(const char *argv0, const char *root, const char *user,
 	argv[argc++] = argv0;
 	argv[argc++] = "-S";
 	argv[argc++] = "-p"; argv[argc++] = root;
+	argv[argc++] = "-t"; argv[argc++] = tmpl;
 	argv[argc++] = "-u"; argv[argc++] = user;
 	if (debug)
 		argv[argc++] = "-d";
@@ -192,8 +236,8 @@ start_child(const char *argv0, const char *root, const char *user,
 static void __dead
 usage(void)
 {
-	fprintf(stderr,
-	    "usage: %s [-dv] [-j n] [-p path] [-s socket] [-u user] [db]\n",
+	fprintf(stderr, "usage: %s [-dv] [-j n] [-p path] [-s socket]"
+	    " [-t tmpldir] [-u user] [db]\n",
 	    getprogname());
 	exit(1);
 }
@@ -208,6 +252,7 @@ main(int argc, char **argv)
 	const char	*user = MSEARCHD_USER;
 	const char	*root = NULL;
 	const char	*db = MSEARCHD_DB;
+	const char	*tmpldir = MSEARCH_TMPL_DIR;
 	const char	*errstr, *cause, *argv0;
 	pid_t		 pid;
 	int		 ch, i, fd, ret, status, server = 0;
@@ -231,7 +276,7 @@ main(int argc, char **argv)
 	if ((argv0 = argv[0]) == NULL)
 		argv0 = "msearchd";
 
-	while ((ch = getopt(argc, argv, "dj:p:Ss:u:v")) != -1) {
+	while ((ch = getopt(argc, argv, "dj:p:Ss:t:u:v")) != -1) {
 		switch (ch) {
 		case 'd':
 			debug = 1;
@@ -250,6 +295,9 @@ main(int argc, char **argv)
 			break;
 		case 's':
 			sock = optarg;
+			break;
+		case 't':
+			tmpldir = optarg;
 			break;
 		case 'u':
 			user = optarg;
@@ -309,8 +357,8 @@ main(int argc, char **argv)
 
 			if ((d = dup(fd)) == -1)
 				fatalx("dup");
-			pids[i] = start_child(argv0, root, user, db, debug,
-			    verbose, d);
+			pids[i] = start_child(argv0, root, user, db, tmpldir,
+			    debug, verbose, d);
 			log_debug("forking child %d (pid %lld)", i,
 			    (long long)pids[i]);
 		}
@@ -321,6 +369,11 @@ main(int argc, char **argv)
 		signal(SIGHUP, SIG_IGN);
 
 		sigprocmask(SIG_UNBLOCK, &set, NULL);
+	} else {
+		load_tmpl(&tmpl_head, tmpldir, "head.html");
+		load_tmpl(&tmpl_search, tmpldir, "search.html");
+		load_tmpl(&tmpl_search_header, tmpldir, "search-header.html");
+		load_tmpl(&tmpl_foot, tmpldir, "foot.html");
 	}
 
 	if (chroot(root) == -1)

@@ -108,6 +108,12 @@ int	clt_printf(struct client *, const char *, ...)
 int	fcgi_cmp(struct fcgi *, struct fcgi *);
 int	fcgi_client_cmp(struct client *, struct client *);
 
+/* msearchd.c */
+extern const char	*tmpl_head;
+extern const char	*tmpl_search;
+extern const char	*tmpl_search_header;
+extern const char	*tmpl_foot;
+
 /* server.c */
 int	server_main(const char *);
 int	server_handle(struct env *, struct client *);
