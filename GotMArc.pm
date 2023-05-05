@@ -68,10 +68,10 @@ sub readall {
 	<$fh>;
 }
 
-my $small_logo = readall "logo-small.html";
-my $hdr = readall "head.html";
-my $foot = readall "foot.html";
-my $idxhdr = readall "index-header.html";
+my $small_logo = readall "templates/logo-small.html";
+my $hdr = readall "templates/head.html";
+my $foot = readall "templates/foot.html";
+my $idxhdr = readall "templates/index-header.html";
 
 sub initpage {
 	my ($fh, $title) = @_;
