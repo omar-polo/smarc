@@ -1,6 +1,9 @@
 **/*.[od]
+**/*.sha256
+**/*.tar.gz
 **/config.h
 **/config.mk
 **/tags
 config.log
 config.log.old
+msearchd/msearchd
