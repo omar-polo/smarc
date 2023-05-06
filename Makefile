@@ -73,6 +73,17 @@ DISTFILES =	GotMArc.pm Makefile README TODO configure \
 		filter-ignore gmimport gmimport.1 gotmarc gotmarc.1 \
 		gotmarc.7 mexp mkindex pe style.css
 
+MANOPTS = man='%N.%S.html;https://man.openbsd.org/%N.%S',style=mandoc.css,toc
+MANFLAGS =	-Thtml -O${MANOPTS}
+
+man:
+	touch msearchd.8
+	man ${MANFLAGS} -l gmimport.1 > gmimport.1.html
+	man ${MANFLAGS} -l gotmarc.1  > gotmarc.1.html
+	man ${MANFLAGS} -l gotmarc.7  > gotmarc.7.html
+	man ${MANFLAGS} -l msearchd/msearchd.8  > msearchd.8.html
+	rm msearchd.8
+
 release:
 	sed -i -e '/^RELEASE=/s/no/yes/' configure
 	${MAKE} ${DISTNAME}.sha256.sig
@@ -97,4 +108,4 @@ ${DISTNAME}.tar.gz: ${DISTFILES}
 	cd .dist && tar czf ../$@ ${DISTNAME}
 	rm -rf .dist
 
-.PHONY: release ${DISTNAME}.tar.gz
+.PHONY: man release dist ${DISTNAME}.tar.gz
