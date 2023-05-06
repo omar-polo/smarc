@@ -1,0 +1,217 @@
+#!/bin/sh
+#
+# Copyright (c) 2014, 2015, 2016 Ingo Schwarze <schwarze@openbsd.org>
+# Copyright (c) 2017, 2018 Kristaps Dzonsons <kristaps@bsd.lv>
+# Copyright (c) 2022, 2023 Omar Polo <op@openbsd.org>
+#
+# Permission to use, copy, modify, and distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+CDIAGFLAGS="-Wall -Wuninitialized -Wunused -Wmissing-prototypes"
+CDIAGFLAGS="${CDIAGFLAGS} -Wstrict-prototypes -Wno-pointer-sign"
+
+# don't ship releases with -Werror
+test "$RELEASE" = no && CDIAGFLAGS="${CDIAGFLAGS} -Werror"
+
+COMPATS=
+
+push_cflags() {
+	if ! echo "$CFLAGS" | grep -q -e "$1"; then
+		CFLAGS="${CFLAGS+$CFLAGS } $1"
+	fi
+}
+
+push_ldflags() {
+	if ! echo "$LDFLAGS" | grep -q -e "$1"; then
+		LDFLAGS="${LDFLAGS+$LDFLAGS } $1"
+	fi
+}
+
+# singletest name var extra-cflags extra-libs msg
+singletest() {
+	msg="$5"
+	if [ -z "$msg" ]; then
+		if [ -n "$3" ]; then
+			msg=" ($3)"
+		elif [ -n "$4" ]; then
+			msg=" ($4)"
+		fi
+	elif [ "$msg" = no ]; then
+		msg=""
+	fi
+
+	cat >&3 <<EOF
+$1: testing...
+$CC tests/$1.c $CFLAGS -Werror $3 -o test-$1 $LDFLAGS $4
+EOF
+	if $CC tests/$1.c $CFLAGS -Werror $3 -o test-$1 $LDFLAGS $4 >&3 2>&3;
+	then
+		rm -f test-$1 test-$1.d
+
+		echo "$1: $CC$msg succeeded" >&3
+		echo "$1$msg: yes"
+		echo >&3
+
+		return 0
+	fi
+
+	echo "$1: $CC$msg failed with $?" >&3
+	echo "$1$msg: no"
+	echo >&3
+
+	rm -f test-$1 test-$1.d
+
+	return 1
+}
+
+# runtest name var extra-cflags extra-libs pkgconfig-name
+runtest() {
+	if singletest "$1" "$2" "" ""; then
+		eval HAVE_$2=1
+		return 0
+	fi
+
+	if [ -n "$3" -o -n "$4" ]; then
+		echo "retrying with ${3+$3 }$4" >&3
+		if singletest "$1" "$2" "$3" "$4"; then
+			if [ -n "$3" ]; then
+				push_cflags "$3"
+			fi
+			if [ -n "$4" ]; then
+				push_ldflags "$4"
+			fi
+			eval HAVE_$2=1
+			return 0
+		fi
+	fi
+
+	if [ -n "$5" -a -n "$pkgconfig" ]; then
+		if $pkgconfig "$5"; then
+			cflags="$($pkgconfig --cflags "$5")"
+			ldflags="$($pkgconfig --libs "$5")"
+			echo "retrying with $pkgconfig" >&3
+			if singletest "$1" "$2" "$cflags" "$ldflags"; then
+				push_cflags "$cflags"
+				push_ldflags "$ldflags"
+				eval HAVE_$2=1
+				return 0
+			fi
+		fi
+	fi
+
+	if [ -f compat/$1.c ]; then
+		COMPATS="${COMPATS+$COMPATS }compat/$1.c"
+	fi
+
+	eval HAVE_$2=0
+	return 1
+}
+
+if singletest MMD _MMD -MMD >/dev/null; then
+	push_cflags -MMD
+	echo "adding -MMD to CFLAGS" >&2
+	echo "adding -MMD to CFLAGS" >&3
+fi
+
+if ! singletest WAIT_ANY WAIT_ANY; then
+	push_cflags -DWAIT_ANY=-1
+fi
+
+runtest __progname	__PROGNAME				|| true
+runtest err		ERR					|| true
+runtest freezero	FREEZERO				|| true
+runtest getdtablecount	GETDTABLECOUNT				|| true
+runtest getdtablesize	GETDTABLESIZE				|| true
+runtest getexecname	GETEXECNAME				|| true
+runtest getprogname	GETPROGNAME				|| true
+runtest imsg		IMSG "" -lutil	libimsg			|| true
+runtest libevent	LIBEVENT "" -levent libevent_core	|| true
+runtest pledge		PLEDGE					|| true
+runtest recallocarray	RECALLOCARRAY -D_OPENBSD_SOURCE		|| true
+runtest setgroups	SETGROUPS -D_BSD_SOURCE			|| true
+runtest setproctitle	SETPROCTITLE				|| true
+runtest setresgid	SETRESGID -D_GNU_SOURCE			|| true
+runtest setresuid	SETRESUID -D_GNU_SOURCE			|| true
+runtest sqlite3		SQLITE3 "" -lsqlite3 sqlite3		|| true
+runtest strlcat		STRLCAT					|| true
+runtest strlcpy		STRLCPY					|| true
+runtest strtonum	STRTONUM				|| true
+runtest sys_queue	SYS_QUEUE				|| true
+runtest sys_tree	SYS_TREE				|| true
+runtest unveil		UNVEIL					|| true
+runtest vasprintf	VASPRINTF -D_GNU_SOURCE			|| true
+
+if [ "$HAVE_IMSG" -eq 0 ]; then
+	echo do not have imsg, $HAVE_IMSG
+	CFLAGS="-I compat/imsg ${CFLAGS}"
+	COMPATS="compat/imsg/imsg.c compat/imsg/imsg-buffer.c $COMPATS"
+fi
+
+if [ "$HAVE_SYS_QUEUE" -eq 0 -o "$HAVE_SYS_TREE" -eq 0 ]; then
+	CFLAGS="-I compat/sys $CFLAGS"
+fi
+
+if [ -n "$COMPATS" ]; then
+	CFLAGS="-I compat $CFLAGS"
+fi
+
+CFLAGS="$CFLAGS $CDIAGFLAGS"
+
+exec > config.h
+echo "config.h writing..." >&2
+
+cat <<EOF
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#ifdef __cplusplus
+# error "Do not use C++: this is a C application."
+#endif
+
+#define HAVE___PROGNAME		${HAVE___PROGNAME}
+#define HAVE_ERR		${HAVE_ERR}
+#define HAVE_FREEZERO		${HAVE_FREEZERO}
+#define HAVE_GETDTABLECOUNT	${HAVE_GETDTABLECOUNT}
+#define HAVE_GETDTABLESIZE	${HAVE_GETDTABLESIZE}
+#define HAVE_GETEXECNAME	${HAVE_GETEXECNAME}
+#define HAVE_GETPROGNAME	${HAVE_GETPROGNAME}
+#define HAVE_IMSG		${HAVE_IMSG}
+#define HAVE_SQLITE3		${HAVE_SQLITE3}
+#define HAVE_PLEDGE		${HAVE_PLEDGE}
+#define HAVE_RECALLOCARRAY	${HAVE_RECALLOCARRAY}
+#define HAVE_SETGROUPS		${HAVE_SETGROUPS}
+#define HAVE_SETPROCTITLE	${HAVE_SETPROCTITLE}
+#define HAVE_SETRESGID		${HAVE_SETRESGID}
+#define HAVE_SETRESUID		${HAVE_SETRESUID}
+#define HAVE_STRLCAT		${HAVE_STRLCAT}
+#define HAVE_STRLCPY		${HAVE_STRLCPY}
+#define HAVE_STRTONUM		${HAVE_STRTONUM}
+#define HAVE_SYS_QUEUE		${HAVE_SYS_QUEUE}
+#define HAVE_SYS_TREE		${HAVE_SYS_TREE}
+#define HAVE_UNVEIL		${HAVE_UNVEIL}
+#define HAVE_VASPRINTF		${HAVE_VASPRINTF}
+
+#endif
+EOF
+
+exec > config.mk
+echo "config.mk: writing..." >&2
+
+cat <<EOF
+include ../config.mk
+
+CC =		${CC}
+CFLAGS =	${CFLAGS}
+LDFLAGS =	${LDFLAGS}
+
+COMPATS =	${COMPATS}
+EOF

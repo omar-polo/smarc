@@ -12,6 +12,7 @@ usage() {
 	exit 1
 }
 
+# changed at install-time
 libexec=.
 mblaze=.mblaze
 tmpldir=templates/

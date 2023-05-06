@@ -1,30 +1,58 @@
+include config.mk
+include ../config.mk
+
 PROG =		msearchd
 SRCS =		msearchd.c fcgi.c server.c
 MAN =		msearchd.8
 
-#DEBUG =	-O0 -g -DDEBUG
+OBJS =		${SRCS:.c=.o} ${COMPATS:.c=.o}
 
-CDIAGFLAGS =	-Wall -Wuninitialized -Wunused
-CDIAGFLAGS +=	-Wmissing-prototypes -Wstrict-prototypes
-CDIAGFLAGS +=	-Werror
+# -- public targets --
 
-WARNINGS =	Yes
+all: ${PROG}
 
-CPPFLAGS +=	-I/usr/local/include
+.PHONY: all tags clean distclean install uninstall dist
 
-LIBSQLITE3 =	/usr/local/lib/libsqlite3.a
+tags:
+	ctags ${SRCS}
 
-LDADD = -levent -lsqlite3
-DPADD = ${LIBEVENT} ${LIBSQLITE3}
-LDFLAGS = -L/usr/local/lib
+clean:
+	rm -f *.[do] compat/*.[do] test/*.[do]
 
-PREFIX ?=	/usr/local
-SBINDIR ?=	${PREFIX}/sbin
-MANDIR ?=	${PREFIX}/man/man
-RCDIR ?=	/etc/rc.d/
+distclean: clean
+	rm -f config.h config.mk
 
-realinstall:
-	install -m 0755 ${PROG} ${DESTDIR}${SBINDIR}
-	install -m 0555 ${.CURDIR}/${PROG}.rc ${DESTDIR}${RCDIR}/${PROG}
+install:
+	mkdir -p ${DESTDIR}${MANDIR}/man8
+	${INSTALL_MAN} msearchd.8 ${DESTDIR}${MANDIR}/man8
+	mkdir -p ${DESTDIR}${SBINDIR}
+	${INSTALL_PROGRAM} ${PROG} ${DESTDIR}${SBINDIR}
+	mkdir -p ${DESTDIR}${SYSCONFDIR}/gotmarc
+	${INSTALL_DATA} schema.sql ${DESTDIR}${SYSCONFDIR}/gotmarc
 
-.include <bsd.prog.mk>
+uninstall:
+	rm -f ${DESTDIR}${MANDIR}/man8/msearchd.8
+	rm -f ${DESTDIR}${SBINDIR}/${PROG}
+	rm -f ${DESTDIR}${SYSCONFDIR}/gotmarc/schema.sql
+
+# -- internal build targets --
+
+${PROG}: ${OBJS}
+	${CC} -o $@ ${CFLAGS} ${OBJS} ${LDFLAGS}
+
+# -- maintainer targets --
+
+DISTFILES =	Makefile configure ${SRCS} msearchd.h msearchd.8 schema.sql
+
+dist:
+	mkdir -p ${DESTDIR}/
+	${INSTALL} -m 0644 ${DISTFILES} ${DESTDIR}/
+	chmod 0755 ${DESTDIR}/configure
+	${MAKE} -C compat DESTDIR=${DESTDIR}/compat dist
+	${MAKE} -C tests  DESTDIR=${DESTDIR}/tests  dist
+
+# -- dependencies --
+
+-include fcgi.d
+-include msearchd.d
+-include server.d

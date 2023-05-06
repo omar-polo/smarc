@@ -1,4 +1,6 @@
-www
-**/obj
 **/*.[od]
+**/config.h
+**/config.mk
 **/tags
+config.log
+config.log.old

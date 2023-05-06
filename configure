@@ -1,0 +1,139 @@
+#!/bin/sh
+#
+# Copyright (c) 2014, 2015, 2016 Ingo Schwarze <schwarze@openbsd.org>
+# Copyright (c) 2017, 2018 Kristaps Dzonsons <kristaps@bsd.lv>
+# Copyright (c) 2022, 2023 Omar Polo <op@openbsd.org>
+#
+# Permission to use, copy, modify, and distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+set -e
+
+RELEASE=no
+
+usage()
+{
+	echo "usage: $0 [--help] [--option=value] [OPTION=VALUE]" >&2
+	exit 1
+}
+
+PKG_CONFIG=
+if command -v pkg-config 2>/dev/null >&2; then
+	PKG_CONFIG=pkg-config
+fi
+
+while [ $# -gt 0 ]; do
+	key="${1%%=*}"
+	val="${1#*=}"
+
+	if [ "$key" = --help ]; then
+		usage
+	fi
+
+	if [ "$key" = "$1" ]; then
+		# if no --x=y, look at the next arg
+		if !shift 2>/dev/null; then
+			echo "$0: missing value for $key" >&2
+			exit 1
+		fi
+		val="$1"
+	fi
+
+	case "$key" in
+	--mandir)	key=MANDIR ;;
+	--perllib)	key=PERL_LIB ;;
+	--prefix)	key=PREFIX ;;
+	--sharedir)	key=SHAREDIR ;;
+	--statedir)	key=STATEDIR ;;
+	--sysconfdir)	key=SYSCONFDIR ;;
+	esac
+
+	case "$key" in
+	CC)		CC="$val" ;;
+	CFLAGS)		CFLAGS="$val" ;;
+	LDFLAGS)	LDFLAGS="$val" ;;
+	MANDIR)		MANDIR="$val" ;;
+	PERL_LIB)	PERL_LIB="$val" ;;
+	PKG_CONFIG)	PKG_CONFIG="$val" ;;
+	PREFIX)		PREFIX="$val" ;;
+	SHAREDIR)	SHAREDIR="$val" ;;
+	STATEDIR)	STATECONFDIR="$val" ;;
+	SYSCONFDIR)	SYSCONFDIR="$val" ;;
+	esac
+
+	shift
+done
+
+CC=${CC:-cc}
+CFLAGS=${CFLAGS:--O2 -pipe}
+PREFIX=${PREFIX-/usr/local}
+STATEDIR=${STATEDIR-/var}
+SYSCONFDIR=${SYSCONFDIR-/etc}
+
+pkgconfig=${PKG_CONFIG}
+if [ "$pkgconfig" = no ]; then
+	pkgconfig=
+fi
+
+export CC CFLAGS LDFLAGS PERL_LIB PREFIX STATEDIR SYSCONFDIR pkgconfig
+
+mv config.log config.log.old 2>/dev/null || true
+
+exec 3> config.log
+echo "config.log: writing..."
+
+echo >&2
+echo "running configure for \`msearchd':" >&2
+(cd msearchd && ./configure)
+echo >&2
+echo "returning to the configure for \`gotmarc':" >&2
+
+exec > config.mk
+echo "config.mk: writing...">&2
+
+cat <<EOF
+INSTALL =		install
+INSTALL_PROGRAM =	\${INSTALL} -m 0555
+INSTALL_LIB =		\${INSTALL} -m 0444
+INSTALL_MAN =		\${INSTALL} -m 0444
+INSTALL_DATA =		\${INSTALL} -m 0444
+
+BINDIR =		\${PREFIX}/bin
+PREFIX =		${PREFIX}
+LIBEXEC =		\${PREFIX}/libexec
+SBINDIR =		\${PREFIX}/sbin
+STATEDIR =		${STATEDIR}
+SYSCONFDIR =		${SYSCONFDIR}
+REAL_SYSCONFDIR =	\${SYSCONFDIR}
+EOF
+
+if [ -n "$MANDIR" ]; then
+	echo "MANDIR = ${MANDIR}"
+else
+	echo 'MANDIR = ${PREFIX}/man'
+fi
+
+if [ -n "$SHAREDIR" ]; then
+	echo "SHAREDIR = ${SHAREDIR}"
+else
+	echo 'SHAREDIR = ${PREFIX}/share'
+fi
+
+if [ -n "$PERL_LIB" ]; then
+	echo "PERL_LIB = ${PERL_LIB}"
+else
+	echo 'PERL_LIB = ${PREFIX}/libdata/perl5/site_perl'
+fi
+
+echo >&2
+echo "Now run \`make' to compile." >&2
+echo >&2

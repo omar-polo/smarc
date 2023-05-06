@@ -374,6 +374,8 @@ main(int argc, char **argv)
 		load_tmpl(&tmpl_search, tmpldir, "search.html");
 		load_tmpl(&tmpl_search_header, tmpldir, "search-header.html");
 		load_tmpl(&tmpl_foot, tmpldir, "foot.html");
+
+		setproctitle("server");
 	}
 
 	if (chroot(root) == -1)
