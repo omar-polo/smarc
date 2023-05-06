@@ -16,7 +16,6 @@ use IO::Poll qw(POLLOUT);
 use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
-use lib ".";
 use GotMArc qw(parse);
 
 my $jobs = $ENV{'MAKE_JOBS'} // 1;

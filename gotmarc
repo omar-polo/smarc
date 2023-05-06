@@ -17,6 +17,11 @@ libexec=.
 mblaze=.mblaze
 tmpldir=templates/
 
+# fix perl include path for in-repo hacking
+if [ "$libexec" = . ]; then
+	export PERL5LIB="$PWD${PERL5LIB:+:}$PERL5LIB"
+fi
+
 cachedir=$HOME/.cache/gotmarc
 mdir=$HOME/Mail/gotmarc
 outdir=/var/www/gotmarc

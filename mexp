@@ -15,7 +15,6 @@ use List::Util qw(max min);
 use OpenBSD::Pledge;
 use OpenBSD::Unveil;
 
-use lib ".";
 use GotMArc qw(parse san urlencode initpage endpage thread_header
     threntry thrslice thrnav);
 
