@@ -13,9 +13,6 @@ use Digest::SHA;
 use Encode qw(encode);
 use IO::Poll qw(POLLOUT);
 
-use OpenBSD::Pledge;
-use OpenBSD::Unveil;
-
 use GotMArc qw(parse);
 
 my $jobs = $ENV{'MAKE_JOBS'} // 1;
@@ -75,8 +72,13 @@ sub process {
 	savesum($tid, $thrsum);
 }
 
-unveil($csumdir, "rwc") or die "unveil $csumdir: $!";
-pledge("stdio rpath wpath cpath") or die "pledge: $!";
+if (`uname` =~ "OpenBSD") {
+	use OpenBSD::Pledge;
+	use OpenBSD::Unveil;
+
+	unveil($csumdir, "rwc") or die "unveil $csumdir: $!";
+	pledge("stdio rpath wpath cpath") or die "pledge: $!";
+}
 
 my @thread;
 while (<>) {

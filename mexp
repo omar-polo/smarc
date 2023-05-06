@@ -12,19 +12,21 @@ use v5.32;
 
 use List::Util qw(max min);
 
-use OpenBSD::Pledge;
-use OpenBSD::Unveil;
-
 use GotMArc qw(parse san urlencode initpage endpage thread_header
     threntry thrslice thrnav);
 
 my $outdir = $ENV{'OUTDIR'};
 die 'Set $OUTDIR' unless defined $outdir;
 
-unveil("/usr/local/bin/mshow", "rx") or die "unveil mshow: $!";
-unveil($outdir, "rwc") or die "unveil $outdir: $!";
+if (`uname` =~ "OpenBSD") {
+	use OpenBSD::Pledge;
+	use OpenBSD::Unveil;
 
-pledge("stdio rpath wpath cpath proc exec") or die "pledge: $!";
+	unveil("/usr/local/bin/mshow", "rx") or die "unveil mshow: $!";
+	unveil($outdir, "rwc") or die "unveil $outdir: $!";
+
+	pledge("stdio rpath wpath cpath proc exec") or die "pledge: $!";
+}
 
 sub export_part {
 	my ($fh, $n, $fname) = @_;

@@ -11,9 +11,6 @@ use warnings;
 use v5.32;
 use File::Temp qw(tempfile);
 
-use OpenBSD::Pledge;
-use OpenBSD::Unveil;
-
 use GotMArc qw(parse san urlencode initpage endpage index_header
     search thread_header threntry);
 
@@ -159,13 +156,18 @@ sub index_entry {
 	threntry $fh, "thread", 0, 0, $mail;
 }
 
-unveil($outdir, "rwc") or die "unveil $outdir: $!";
+if (`uname` =~ "OpenBSD") {
+	use OpenBSD::Pledge;
+	use OpenBSD::Unveil;
 
-# can't use tmppath because File::Temp checks wether /tmp exists.
-unveil("/tmp", "rwc") or die "unveil /tmp: $!";
+	unveil($outdir, "rwc") or die "unveil $outdir: $!";
 
-# fattr for File::Temp
-pledge("stdio rpath wpath cpath fattr") or die "pledge: $!";
+	# can't use tmppath because File::Temp checks wether /tmp exists.
+	unveil("/tmp", "rwc") or die "unveil /tmp: $!";
+
+	# fattr for File::Temp
+	pledge("stdio rpath wpath cpath fattr") or die "pledge: $!";
+}
 
 nextfile;
 
