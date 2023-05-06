@@ -56,6 +56,7 @@ while [ $# -gt 0 ]; do
 	--sharedir)	key=SHAREDIR ;;
 	--statedir)	key=STATEDIR ;;
 	--sysconfdir)	key=SYSCONFDIR ;;
+	--wwwuser)	key=WWWUSER ;;
 	esac
 
 	case "$key" in
@@ -70,6 +71,7 @@ while [ $# -gt 0 ]; do
 	SHAREDIR)	SHAREDIR="$val" ;;
 	STATEDIR)	STATECONFDIR="$val" ;;
 	SYSCONFDIR)	SYSCONFDIR="$val" ;;
+	WWWUSER)	WWWUSER="$val" ;;
 	esac
 
 	shift
@@ -80,6 +82,7 @@ CFLAGS=${CFLAGS:--O2 -pipe}
 PREFIX=${PREFIX-/usr/local}
 STATEDIR=${STATEDIR-/var}
 SYSCONFDIR=${SYSCONFDIR-/etc}
+WWWUSER=${WWWUSER:-www}
 
 pkgconfig=${PKG_CONFIG}
 if [ "$pkgconfig" = no ]; then
@@ -115,6 +118,7 @@ LIBEXEC =		\${PREFIX}/libexec
 SBINDIR =		\${PREFIX}/sbin
 STATEDIR =		${STATEDIR}
 SYSCONFDIR =		${SYSCONFDIR}
+WWWUSER =		${WWWUSER}
 EOF
 
 if [ -n "$REALSYSCONFDIR" ]; then

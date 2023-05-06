@@ -40,8 +40,11 @@ uninstall:
 ${PROG}: ${OBJS}
 	${CC} -o $@ ${CFLAGS} ${OBJS} ${LDFLAGS}
 
+DEFS =	-DSYSCONFDIR="\"${REALSYSCONFDIR}\"" \
+	-DMSEARCHD_USER="\"${WWWUSER}\""
+
 .c.o:
-	${CC} -c $< -o $@ -DSYSCONFDIR="\"${REALSYSCONFDIR}\"" ${CFLAGS}
+	${CC} -c $< -o $@ ${DEFS} ${CFLAGS}
 
 # -- maintainer targets --
 
