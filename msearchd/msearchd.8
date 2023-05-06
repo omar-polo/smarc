@@ -102,7 +102,9 @@ Example configuration for
 .Bd -literal -offset -indent
 server "localhost" {
 	listen on * port 80
-	root "/marc"
+	root "/gotmarc"
+	gzip-static
+
 	location "/search" {
 		fastcgi socket "/run/msearchd.sock"
 	}
