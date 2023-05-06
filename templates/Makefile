@@ -10,7 +10,7 @@ dist:
 
 install:
 	mkdir -p ${DESTDIR}${SYSCONFDIR}/gotmarc/
-	${INSTALL_DATA} ${DISTFILES} ${DESTDIR}${SYSCONFDIR}/gotmarc/
+	${INSTALL_DATA} *.html ${DESTDIR}${SYSCONFDIR}/gotmarc/
 
 uninstall:
 	rm -f ${DESTDIR}${SYSCONFDIR}/gotmarc/${DISTFILES}
