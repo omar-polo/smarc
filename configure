@@ -86,7 +86,7 @@ if [ "$pkgconfig" = no ]; then
 	pkgconfig=
 fi
 
-export CC CFLAGS LDFLAGS PERL_LIB PREFIX SYSCONFDIR pkgconfig
+export CC CFLAGS LDFLAGS pkgconfig
 
 mv config.log config.log.old 2>/dev/null || true
 
