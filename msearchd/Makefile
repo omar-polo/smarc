@@ -40,6 +40,9 @@ uninstall:
 ${PROG}: ${OBJS}
 	${CC} -o $@ ${CFLAGS} ${OBJS} ${LDFLAGS}
 
+.c.o:
+	${CC} -c $< -o $@ -DSYSCONFDIR="\"${REAL_SYSCONFDIR}\"" ${CFLAGS}
+
 # -- maintainer targets --
 
 DISTFILES =	Makefile configure ${SRCS} msearchd.h msearchd.8 schema.sql
