@@ -41,7 +41,7 @@ ${PROG}: ${OBJS}
 	${CC} -o $@ ${CFLAGS} ${OBJS} ${LDFLAGS}
 
 .c.o:
-	${CC} -c $< -o $@ -DSYSCONFDIR="\"${REAL_SYSCONFDIR}\"" ${CFLAGS}
+	${CC} -c $< -o $@ -DSYSCONFDIR="\"${REALSYSCONFDIR}\"" ${CFLAGS}
 
 # -- maintainer targets --
 

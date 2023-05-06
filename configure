@@ -52,6 +52,7 @@ while [ $# -gt 0 ]; do
 	--mandir)	key=MANDIR ;;
 	--perllib)	key=PERL_LIB ;;
 	--prefix)	key=PREFIX ;;
+	--realsysconfdir) key=REALSYSCONFDIR ;;
 	--sharedir)	key=SHAREDIR ;;
 	--statedir)	key=STATEDIR ;;
 	--sysconfdir)	key=SYSCONFDIR ;;
@@ -65,6 +66,7 @@ while [ $# -gt 0 ]; do
 	PERL_LIB)	PERL_LIB="$val" ;;
 	PKG_CONFIG)	PKG_CONFIG="$val" ;;
 	PREFIX)		PREFIX="$val" ;;
+	REALSYSCONFDIR)	REALSYSCONFDIR="$val" ;;
 	SHAREDIR)	SHAREDIR="$val" ;;
 	STATEDIR)	STATECONFDIR="$val" ;;
 	SYSCONFDIR)	SYSCONFDIR="$val" ;;
@@ -113,8 +115,13 @@ LIBEXEC =		\${PREFIX}/libexec
 SBINDIR =		\${PREFIX}/sbin
 STATEDIR =		${STATEDIR}
 SYSCONFDIR =		${SYSCONFDIR}
-REAL_SYSCONFDIR =	\${SYSCONFDIR}
 EOF
+
+if [ -n "$REALSYSCONFDIR" ]; then
+	echo "REALSYSCONFDIR = ${REALSYSCONFDIR}"
+else
+	echo 'REALSYSCONFDIR = ${SYSCONFDIR}'
+fi
 
 if [ -n "$MANDIR" ]; then
 	echo "MANDIR = ${MANDIR}"
