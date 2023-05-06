@@ -151,7 +151,6 @@ runtest unveil		UNVEIL					|| true
 runtest vasprintf	VASPRINTF -D_GNU_SOURCE			|| true
 
 if [ "$HAVE_IMSG" -eq 0 ]; then
-	echo do not have imsg, $HAVE_IMSG
 	CFLAGS="-I compat/imsg ${CFLAGS}"
 	COMPATS="compat/imsg/imsg.c compat/imsg/imsg-buffer.c $COMPATS"
 fi
