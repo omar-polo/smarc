@@ -28,7 +28,7 @@ install:
 	${INSTALL_PROGRAM} gmimport ${DESTDIR}${BINDIR}
 	sed	-e "/^libexec=/s@=.*@=${LIBEXEC}/gotmarc@" \
 		-e "/^mblaze=/s@=.*@=${SHAREDIR}/gotmarc/mblaze@" \
-		-e "/^tmpldir=/s@=.*@=${REAL_SYSCONFDIR}/gotmarc@" \
+		-e "/^tmpldir=/s@=.*@=${REALSYSCONFDIR}/gotmarc@" \
 		gotmarc > ${DESTDIR}${BINDIR}/gotmarc
 	chmod 0755 ${DESTDIR}${BINDIR}/gotmarc
 	mkdir -p ${DESTDIR}${LIBEXEC}/gotmarc
