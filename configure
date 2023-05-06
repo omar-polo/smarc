@@ -54,7 +54,6 @@ while [ $# -gt 0 ]; do
 	--prefix)	key=PREFIX ;;
 	--realsysconfdir) key=REALSYSCONFDIR ;;
 	--sharedir)	key=SHAREDIR ;;
-	--statedir)	key=STATEDIR ;;
 	--sysconfdir)	key=SYSCONFDIR ;;
 	--wwwuser)	key=WWWUSER ;;
 	esac
@@ -69,7 +68,6 @@ while [ $# -gt 0 ]; do
 	PREFIX)		PREFIX="$val" ;;
 	REALSYSCONFDIR)	REALSYSCONFDIR="$val" ;;
 	SHAREDIR)	SHAREDIR="$val" ;;
-	STATEDIR)	STATECONFDIR="$val" ;;
 	SYSCONFDIR)	SYSCONFDIR="$val" ;;
 	WWWUSER)	WWWUSER="$val" ;;
 	esac
@@ -80,7 +78,6 @@ done
 CC=${CC:-cc}
 CFLAGS=${CFLAGS:--O2 -pipe}
 PREFIX=${PREFIX-/usr/local}
-STATEDIR=${STATEDIR-/var}
 SYSCONFDIR=${SYSCONFDIR-/etc}
 WWWUSER=${WWWUSER:-www}
 
@@ -89,7 +86,7 @@ if [ "$pkgconfig" = no ]; then
 	pkgconfig=
 fi
 
-export CC CFLAGS LDFLAGS PERL_LIB PREFIX STATEDIR SYSCONFDIR pkgconfig
+export CC CFLAGS LDFLAGS PERL_LIB PREFIX SYSCONFDIR pkgconfig
 
 mv config.log config.log.old 2>/dev/null || true
 
@@ -116,7 +113,6 @@ BINDIR =		\${PREFIX}/bin
 PREFIX =		${PREFIX}
 LIBEXEC =		\${PREFIX}/libexec
 SBINDIR =		\${PREFIX}/sbin
-STATEDIR =		${STATEDIR}
 SYSCONFDIR =		${SYSCONFDIR}
 WWWUSER =		${WWWUSER}
 EOF
