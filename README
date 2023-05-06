@@ -1,59 +1,31 @@
-GOTMARC -- A web archive for the Game of Trees mailing list
-===========================================================
+GOTMARC -- A static mailing list web archive generator
+======================================================
 
 A collection of scripts to generate a static mail archive from a
-Maildir; intended to provide a public web interface for the Game of
-Trees mailing list.
+Maildir; originally intended to provide a public web interface for the
+Game of Trees mailing list, now flexible enough to be used for other
+lists.
 
-The only dependency outside base is mblaze.
+The static site generator depends on perl and mblaze, the web search
+component on libevent and sqlite3.
 
 
 How it works
 ------------
 
-The makefile uses mlist(1) to gather all the mail of the mailing list,
-mthread(1) for threading and mscan(1) for parsing.
+gotmarc(1) incrementally generate a set of static files from a maildir,
+gmimport(1) and msearchd(8) are used to populate an sqlite3 database to
+provide a web-based full text search on all the mails.
 
-Then, three custom scripts are called:
-
- - mexp: creates a separate HTML page for each mail, as well as the
-   raw message/body parts and the attachments.  It's the heaviest part
-   of the pipeline.  If a message appears to have already been exported,
-   it will be skipped to save some time.
-
- - pe: (parallelized export) since mexp is slow, attemps to run N mexp
-   processes in parallel and dispatch threads to them.
-
- - mkindex: generates the index and threads page.
-
-
-Usage
------
-
-	$ make MDIR=/path/to/got/maildir
-
-will create and populate a `/var/www/marc' directory with the HTML
-files.  Pass OUTDIR to override the destination directory.  MDIR
-defaults to ~/Mail/gameoftrees.
-
-There's some basic support for parallelizing the export, although it's
-disabled by default.  Tweak MAKE_JOBS for `pe' to use multiple jobs.
-
-Every once in a while, the maildir should be synced (with mbsync for
-example) and `make' re-run to update the archive.  gotmarc does
-incremental updates to some extent so except for the first run, which
-will take a while, updating the archive should be fast.
-
-For use with httpd' `gzip-static' (or similar)
-
-	$ make gzip
-
-will recursively compress every file in OUTDIR, leaving the original
-file intact.
+gotmarc(7) documents the step needed for a first setup, how to operate
+it and tips for generating multiple archives.
 
 
 License
 -------
 
-As far as I'm concerned, gotmarc (i.e. all the code in this
-repository) is in the public domain.
+gotmarc, gmimport and msearchd are released in the public domain.  The
+configure script loosely based on oconfigure and is released under the
+terms of ISC license.  Some OpenBSD-compats are included to build on
+multiple platforms, these are released under a BSD-style license.
+See the first lines of each file for the copyright owners.
