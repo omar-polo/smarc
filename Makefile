@@ -106,8 +106,9 @@ ${DISTNAME}.tar.gz: ${DISTFILES}
 	cd .dist/${DISTNAME} && chmod 0755 configure filter-ignore \
 		smingest smarc mexp mkindex pe
 	${MAKE} -C .mblaze   DESTDIR=${PWD}/.dist/${DISTNAME}/.mblaze   dist
-	${MAKE} -C templates DESTDIR=${PWD}/.dist/${DISTNAME}/templates dist
+	${MAKE} -C keys      DESTDIR=${PWD}/.dist/${DISTNAME}/keys      dist
 	${MAKE} -C msearchd  DESTDIR=${PWD}/.dist/${DISTNAME}/msearchd  dist
+	${MAKE} -C templates DESTDIR=${PWD}/.dist/${DISTNAME}/templates dist
 	cd .dist && tar czf ../$@ ${DISTNAME}
 	rm -rf .dist
 
