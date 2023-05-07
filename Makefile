@@ -69,9 +69,9 @@ uninstall:
 
 PRIVKEY =	missing-PRIVKEY
 PUBKEY =	missing-PUBKEY
-DISTFILES =	SMArc.pm Makefile README TODO configure \
-		filter-ignore smingest smingest.1 smarc smarc.1 \
-		smarc.7 mexp mkindex pe style.css
+DISTFILES =	CHANGES Makefile README SMArc.pm TODO configure \
+		filter-ignore mexp mkindex pe smarc smarc.1 smarc.7 \
+		smingest smingest.1 style.css
 
 MANOPTS = man='%N.%S.html;https://man.openbsd.org/%N.%S',style=mandoc.css,toc
 MANFLAGS =	-Thtml -O${MANOPTS}
