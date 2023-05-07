@@ -9,7 +9,6 @@ all:
 dist:
 	mkdir -p ${DESTDIR}/
 	${INSTALL} -m 0644 ${DISTFILES} ${DESTDIR}/
-	${MAKE} -C imsg DESTDIR=${DESTDIR}/imsg dist
 	${MAKE} -C sys  DESTDIR=${DESTDIR}/sys  dist
 
 include ../../config.mk

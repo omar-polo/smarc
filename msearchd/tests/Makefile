@@ -1,6 +1,6 @@
 DISTFILES =	Makefile MMD.c WAIT_ANY.c __progname.c err.c freezero.c \
 		getdtablecount.c getdtablesize.c getexecname.c \
-		getprogname.c imsg.c libevent.c pledge.c recallocarray.c \
+		getprogname.c libevent.c pledge.c recallocarray.c \
 		setgroups.c setproctitle.c setresgid.c setresuid.c \
 		sqlite3.c strlcat.c strlcpy.c strtonum.c sys_queue.c \
 		sys_tree.c unveil.c vasprintf.c

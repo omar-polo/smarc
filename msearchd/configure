@@ -133,7 +133,6 @@ runtest getdtablecount	GETDTABLECOUNT				|| true
 runtest getdtablesize	GETDTABLESIZE				|| true
 runtest getexecname	GETEXECNAME				|| true
 runtest getprogname	GETPROGNAME				|| true
-runtest imsg		IMSG "" -lutil	libimsg			|| true
 runtest libevent	LIBEVENT "" -levent libevent_core	|| true
 runtest pledge		PLEDGE					|| true
 runtest recallocarray	RECALLOCARRAY -D_OPENBSD_SOURCE		|| true
@@ -149,11 +148,6 @@ runtest sys_queue	SYS_QUEUE				|| true
 runtest sys_tree	SYS_TREE				|| true
 runtest unveil		UNVEIL					|| true
 runtest vasprintf	VASPRINTF -D_GNU_SOURCE			|| true
-
-if [ "$HAVE_IMSG" -eq 0 ]; then
-	CFLAGS="-I compat/imsg ${CFLAGS}"
-	COMPATS="compat/imsg/imsg.c compat/imsg/imsg-buffer.c $COMPATS"
-fi
 
 if [ "$HAVE_SYS_QUEUE" -eq 0 -o "$HAVE_SYS_TREE" -eq 0 ]; then
 	CFLAGS="-I compat/sys $CFLAGS"
@@ -183,7 +177,6 @@ cat <<EOF
 #define HAVE_GETDTABLESIZE	${HAVE_GETDTABLESIZE}
 #define HAVE_GETEXECNAME	${HAVE_GETEXECNAME}
 #define HAVE_GETPROGNAME	${HAVE_GETPROGNAME}
-#define HAVE_IMSG		${HAVE_IMSG}
 #define HAVE_SQLITE3		${HAVE_SQLITE3}
 #define HAVE_PLEDGE		${HAVE_PLEDGE}
 #define HAVE_RECALLOCARRAY	${HAVE_RECALLOCARRAY}
