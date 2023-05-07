@@ -1,11 +1,3 @@
-- fix `make gzip'
-
-  should gzip all the files in /var/www/marc, and re-gzip if the
-  original changed.  My understanding is that if foo.gz exists then
-  it'll be skipped, which is not desired.  In particular the index pages
-  should be re-gzipped every time as they change.
-
-
 - automatic linking
 
   would be nice to transform the URLs in the mail' body into clickable
