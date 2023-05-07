@@ -45,6 +45,7 @@ export MBLAZE_PAGER=cat
 export MDIR="$mdir"
 export OUTDIR="${outdir:-/var/www/smarc}"
 export TMPLDIR="$tmpldir"
+export TZ=UTC
 
 # make sure the directories are there
 set -e
