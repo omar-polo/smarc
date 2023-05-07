@@ -12,17 +12,19 @@ use utf8;
 use Date::Parse;
 use File::Basename;
 
-use OpenBSD::Pledge;
-use OpenBSD::Unveil;
-
 die "usage: $0 dbpath\n" if @ARGV != 1;
 my $dbpath = shift @ARGV;
 
 open(my $sqlite, "|-", "/usr/local/bin/sqlite3", $dbpath)
     or die "can't spawn sqlite3";
 
-unveil("/usr/local/bin/mshow", "rx") or die "unveil mshow: $!";
-pledge("stdio proc exec") or die "pledge: $!";
+if (`uname` =~ "OpenBSD") {
+	use OpenBSD::Pledge;
+	use OpenBSD::Unveil;
+
+	unveil("/usr/local/bin/mshow", "rx") or die "unveil mshow: $!";
+	pledge("stdio proc exec") or die "pledge: $!";
+}
 
 say $sqlite ".import --csv /dev/stdin email"
     or die "can't speak to sqlite: $!";
