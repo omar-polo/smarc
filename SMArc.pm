@@ -2,7 +2,7 @@
 # the public domain.  The author hereby disclaims copyright to this
 # source code.
 
-package GotMArc;
+package SMArc;
 use strict;
 use warnings;
 use v5.32;
