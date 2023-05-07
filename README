@@ -17,8 +17,48 @@ smarc(1) incrementally generate a set of static files from a maildir,
 smingest(1) and msearchd(8) are used to populate an sqlite3 database to
 provide a web-based full text search on all the mails.
 
-smarc(7) documents the step needed for a first setup, how to operate
-it and tips for generating multiple archives.
+smarc(7) documents the step needed for a first setup, how to operate it
+and tips for generating multiple archives.
+
+
+Building
+--------
+
+To compile it, run
+
+	$ ./configure
+	$ make
+	# make install
+
+Several parameters can be passed to the `configure' script to customize
+the build:
+
+ --mandir or MANDIR			Where to install man pages
+ --perllib or PERLLIB			Where to install the perl module
+ --prefix or PREFIX			Where to install, /usr/local
+ --realsysconfdir or REALSYSCONFDIR	"Real" sysconfdir
+ --sharedir or SHAREDIR			$PREFIX/share by default
+ --sysconfdir or SYSCONFDIR		/etc
+ --wwwuser or WWWUSER			Name of the user used by msearchd
+
+and also:
+
+ CC		The C compiler
+ CFLAGS		Flags for the C compiler
+ LDFLAGS	Flags for the linker
+ PKG_CONFIG	pkg-config program, use `no' or empty to disable usage
+
+The variables can also be set in the environment for the configure
+script to pick them up.
+
+The difference between REALSYSCONFDIR and SYSCONFDIR is to accomodate
+the packaging on some systems.  For example, on OpenBSD SYSCONFDIR is
+pointed at /usr/local/share/examples and the port then copies the files
+in /etc, to allow the user to freely change some files and keep edits
+across package updates.
+
+smarc always installs in SYSCONFDIR but at runtime looks into
+REALSYSCONFDIR.
 
 
 License
