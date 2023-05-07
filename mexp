@@ -12,7 +12,7 @@ use v5.32;
 
 use List::Util qw(max min);
 
-use GotMArc qw(parse san urlencode initpage endpage thread_header
+use SMArc qw(parse san urlencode initpage endpage thread_header
     threntry thrslice thrnav);
 
 my $outdir = $ENV{'OUTDIR'};

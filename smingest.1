@@ -1,11 +1,11 @@
-.\" gmimport.1 was written by Omar Polo <op@openbsd.org> and is placed in
+.\" smingest.1 was written by Omar Polo <op@openbsd.org> and is placed in
 .\" the public domain.  The author hereby disclaims copyright to this
 .\" source code.
 .Dd May 5, 2023
-.Dt GMIMPORT 1
+.Dt SMINGEST 1
 .Os
 .Sh NAME
-.Nm gmimport
+.Nm smingest
 .Nd import emails into a sqlite database
 .Sh SYNOPSIS
 .Nm
@@ -19,15 +19,15 @@ sqlite3 database at
 .Ar dbpath .
 .Sh EXAMPLES
 To index all the messages in the
-.Pa ~/Mail/gotmarc
+.Pa ~/Mail/smarc
 maildir, useful to initially populate the database:
 .Pp
-.Dl mlist ~/Mail/gotmarc | gmimport /var/www/msearchd/mails.sqlite3
+.Dl mlist ~/Mail/smarc | smingest /var/www/msearchd/mails.sqlite3
 .Pp
 Incorporate new messages in the maildir and add them to the database,
 useful after fetching new mails:
 .Pp
-.Dl minc ~/Mail/gotmarc | gmimport /var/www/msearchd/mails.sqlite3
+.Dl minc ~/Mail/smarc | smingest /var/www/msearchd/mails.sqlite3
 .Sh SEE ALSO
 .Xr minc 1 ,
 .Xr mlist 1 ,

@@ -38,7 +38,7 @@
 #endif
 
 #ifndef MSEARCH_TMPL_DIR
-#define MSEARCH_TMPL_DIR SYSCONFDIR "/gotmarc"
+#define MSEARCH_TMPL_DIR SYSCONFDIR "/smarc"
 #endif
 
 #define MAX_CHILDREN 32

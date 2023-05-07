@@ -9,11 +9,11 @@ dist:
 	${INSTALL} -m 0644 ${DISTFILES} ${DESTDIR}/
 
 install:
-	mkdir -p ${DESTDIR}${SYSCONFDIR}/gotmarc/
-	${INSTALL_DATA} *.html ${DESTDIR}${SYSCONFDIR}/gotmarc/
+	mkdir -p ${DESTDIR}${SYSCONFDIR}/smarc/
+	${INSTALL_DATA} *.html ${DESTDIR}${SYSCONFDIR}/smarc/
 
 uninstall:
-	rm -f ${DESTDIR}${SYSCONFDIR}/gotmarc/${DISTFILES}
+	rm -f ${DESTDIR}${SYSCONFDIR}/smarc/${DISTFILES}
 
 .PHONY: all dist install uninstall
 

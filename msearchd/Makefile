@@ -27,13 +27,13 @@ install:
 	${INSTALL_MAN} msearchd.8 ${DESTDIR}${MANDIR}/man8
 	mkdir -p ${DESTDIR}${SBINDIR}
 	${INSTALL_PROGRAM} ${PROG} ${DESTDIR}${SBINDIR}
-	mkdir -p ${DESTDIR}${SYSCONFDIR}/gotmarc
-	${INSTALL_DATA} schema.sql ${DESTDIR}${SYSCONFDIR}/gotmarc
+	mkdir -p ${DESTDIR}${SYSCONFDIR}/smarc
+	${INSTALL_DATA} schema.sql ${DESTDIR}${SYSCONFDIR}/smarc
 
 uninstall:
 	rm -f ${DESTDIR}${MANDIR}/man8/msearchd.8
 	rm -f ${DESTDIR}${SBINDIR}/${PROG}
-	rm -f ${DESTDIR}${SYSCONFDIR}/gotmarc/schema.sql
+	rm -f ${DESTDIR}${SYSCONFDIR}/smarc/schema.sql
 
 # -- internal build targets --
 

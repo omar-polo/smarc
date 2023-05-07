@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# gotmarc was written by Omar Polo <op@openbsd.org> and is placed in the
+# smarc was written by Omar Polo <op@openbsd.org> and is placed in the
 # public domain.  The author hereby disclaims copyright to this source
 # code.
 
@@ -22,9 +22,9 @@ if [ "$libexec" = . ]; then
 	export PERL5LIB="$PWD${PERL5LIB:+:}$PERL5LIB"
 fi
 
-cachedir=$HOME/.cache/gotmarc
-mdir=$HOME/Mail/gotmarc
-outdir=/var/www/gotmarc
+cachedir=$HOME/.cache/smarc
+mdir=$HOME/Mail/smarc
+outdir=/var/www/smarc
 
 while getopts c:j:m:o:t: flag; do
 	case $flag in
@@ -43,7 +43,7 @@ export MAKE_JOBS="${MAKE_JOBS:-1}"
 export MBLAZE="$mblaze"
 export MBLAZE_PAGER=cat
 export MDIR="$mdir"
-export OUTDIR="${outdir:-/var/www/gotmarc}"
+export OUTDIR="${outdir:-/var/www/smarc}"
 export TMPLDIR="$tmpldir"
 
 # make sure the directories are there

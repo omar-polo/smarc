@@ -13,7 +13,7 @@ use Digest::SHA;
 use Encode qw(encode);
 use IO::Poll qw(POLLOUT);
 
-use GotMArc qw(parse);
+use SMArc qw(parse);
 
 my $jobs = $ENV{'MAKE_JOBS'} // 1;
 

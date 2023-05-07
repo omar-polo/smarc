@@ -11,7 +11,7 @@ use warnings;
 use v5.32;
 use File::Temp qw(tempfile);
 
-use GotMArc qw(parse san urlencode initpage endpage index_header
+use SMArc qw(parse san urlencode initpage endpage index_header
     search thread_header threntry);
 
 my $outdir = $ENV{'OUTDIR'};
@@ -63,7 +63,7 @@ sub nextfile {
 	$page += 1;
 
 	my $path;
-	($pfh, $path) = tempfile "/tmp/gotmarc.index.XXXXXXXXXX";
+	($pfh, $path) = tempfile "/tmp/smarc.index.XXXXXXXXXX";
 	binmode($pfh, ':utf8');
 	push @files, $path;
 	say $pfh "<div class='thread'><ul>";

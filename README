@@ -1,5 +1,5 @@
-GOTMARC -- A static mailing list web archive generator
-======================================================
+SMARC -- static web mail archive generator
+==========================================
 
 A collection of scripts to generate a static mail archive from a
 Maildir; originally intended to provide a public web interface for the
@@ -13,18 +13,18 @@ component on libevent and sqlite3.
 How it works
 ------------
 
-gotmarc(1) incrementally generate a set of static files from a maildir,
-gmimport(1) and msearchd(8) are used to populate an sqlite3 database to
+smarc(1) incrementally generate a set of static files from a maildir,
+smingest(1) and msearchd(8) are used to populate an sqlite3 database to
 provide a web-based full text search on all the mails.
 
-gotmarc(7) documents the step needed for a first setup, how to operate
+smarc(7) documents the step needed for a first setup, how to operate
 it and tips for generating multiple archives.
 
 
 License
 -------
 
-gotmarc, gmimport and msearchd are released in the public domain.  The
+smarc, smingest and msearchd are released in the public domain.  The
 configure script loosely based on oconfigure and is released under the
 terms of ISC license.  Some OpenBSD-compats are included to build on
 multiple platforms, these are released under a BSD-style license.

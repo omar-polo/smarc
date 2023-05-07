@@ -97,7 +97,7 @@ echo >&2
 echo "running configure for \`msearchd':" >&2
 (cd msearchd && ./configure)
 echo >&2
-echo "returning to the configure for \`gotmarc':" >&2
+echo "returning to the configure for \`smarc':" >&2
 
 exec > config.mk
 echo "config.mk: writing...">&2

@@ -1,11 +1,11 @@
-.\" gotmarc.1 was written by Omar Polo <op@openbsd.org> and is placed in
+.\" smarc.1 was written by Omar Polo <op@openbsd.org> and is placed in
 .\" the public domain.  The author hereby disclaims copyright to this
 .\" source code.
 .Dd May 5, 2023
-.Dt GOTMARC 1
+.Dt SMARC 1
 .Os
 .Sh NAME
-.Nm gotmarc
+.Nm smarc
 .Nd mailing list static site generator
 .Sh SYNOPSIS
 .Nm
@@ -24,7 +24,7 @@ The arguments are as follows:
 Cache directory used for keeping track of threads during incremental
 updates.
 Defaults to
-.Pa ~/.cache/gotmarc
+.Pa ~/.cache/smarc
 .It Fl j Ar n
 Use
 .Ar n
@@ -35,51 +35,53 @@ quite some time.
 Source
 .Ar maildir .
 Defaults to
-.Pa ~/Mail/gotmarc .
+.Pa ~/Mail/smarc .
 .It Fl o Ar outdir
 The destination directory where the HTML files will be written to, it's
-.Pa /var/www/gotmarc
+.Pa /var/www/smarc
 by default.
 .It Fl t Ar tmpldir
 Path to a directory containing the template files.
-.Pa /etc/gotmarc
+.Pa /etc/smarc
 by default.
 .El
 .Sh FILES
 .Bl -tag -width Ds
-.It Pa /etc/gotmarc/foot.html
+.It Pa /etc/smarc/foot.html
 Template with the trailing part of the page.
-.It Pa /etc/gotmarc/head.html
+.It Pa /etc/smarc/head.html
 Template with the first part of the page.
 .Dv TITLE
 is substituted with the title.
-.It Pa /etc/gotmarc/index-header.html
+.It Pa /etc/smarc/index-header.html
 Template with the title for index pages.
 .Dv PAGE
 is replaced with the page number and
 .Dv SUBTITLE
 with the date range.
-.It Pa /etc/gotmarc/logo-small.html
+.It Pa /etc/smarc/logo-small.html
 Small version of the logo, included in the thread header.
-.It Pa /etc/gotmarc/search.html
+.It Pa /etc/smarc/search.html
 Template for the search form.
 .Ev QUERY
 is replaced with the search query.
-.It Pa /var/www/gotmarc
+.It Pa /var/www/smarc
 Default output directory.
-.It Pa ~/.cache/gotmarc
+.It Pa ~/.cache/smarc
 Default cache directory.
-.It Pa ~/Mail/gotmarc
+.It Pa ~/Mail/smarc
 Default maildir.
 .El
 .Sh SEE ALSO
-.Xr gotmarc 7
+.Xr smarc 7
 .Sh HISTORY
 .Nm
-started as a hacky collection of perl scripts to generate a web archive
-for the Game of Trees mailing list.
-Only later it was converted to be a usable generic web mailing list
-archive tool.
+started as a hacky collection of perl scripts under the name of
+.Sq gotmarc
+to generate a web archive for the Game of Trees mailing list.
+Only later, while still being a hacky collection of perl and shell
+scripts, was converted to be a generic web mailing list archive tool and
+the project renamed.
 .Sh AUTHORS
 .An -nosplit
 The

@@ -1,11 +1,11 @@
-.\" gotmarc.7 was written by Omar Polo <op@openbsd.org> and is placed in
+.\" smarc.7 was written by Omar Polo <op@openbsd.org> and is placed in
 .\" the public domain.  The author hereby disclaims copyright to this
 .\" source code.
 .Dd May 5, 2023
-.Dt GOTMARC 7
+.Dt SMARC 7
 .Os
 .Sh NAME
-.Nm gotmarc
+.Nm smarc
 .Nd mailing list web archive generation system
 .Sh DESCRIPTION
 .Nm
@@ -18,9 +18,9 @@ At a higher level,
 is made of three components:
 .Pp
 .Bl -tag -width msearchd_8_ -compact -offset indent
-.It Xr gotmarc 1
+.It Xr smarc 1
 to generate the static HTML files from a maildir.
-.It Xr gmimport 1
+.It Xr smingest 1
 to import emails into a sqlite3 database.
 .It Xr msearchd 8
 to provide search results.
@@ -49,80 +49,80 @@ Commands to be run as a unpriviledged user are preceded by a dollar sign
 while commands requiring superuser privileges by a hash mark
 .Sq # .
 Hereafter, it will be assumed that the local user is called
-.Sq gotmarc .
+.Sq smarc .
 .Ss 1. Create and populate the output directory
 The web archive is made of several static files, mostly HTML, that needs
 to be served by a web server like
 .Xr httpd 8 .
-.Pa /var/www/gotmarc
+.Pa /var/www/smarc
 is the default location, but a different path can be used.
 To prepare it, issue:
 .Bd -literal -offset indent
-# mkdir -p /var/www/gotmarc
-# chown gotmarc /var/www/gotmarc
+# mkdir -p /var/www/smarc
+# chown smarc /var/www/smarc
 .Ed
 .Pp
 Then copy the CSS file, optionally tweaking it.
 .Pp
-.Dl $ cp /usr/local/share/examples/gotmarc/style.css /var/www/gotmarc
+.Dl $ cp /usr/local/share/examples/smarc/style.css /var/www/smarc
 .Pp
 Other eventual assets
 .Pq e.g.\& logo images
 need to be copied here as well.
 .Ss 2. Customize the templates
 The default templates are installed at
-.Pa /etc/gotmarc .
+.Pa /etc/smarc .
 Since these are anonymous, they need to be tweaked to include
 information about the mailing list.
 .Pp
 Care should be taken when editing these files after generating the
 archive since existing pages won't be automatically updated.
 The cachedir
-.Pq see Xr gotmarc 1
+.Pq see Xr smarc 1
 needs to be deleted and the web archive generated again.
 .Xr msearchd 8
 has to be stopped and restarted as well.
 .Ss 3. Prepare the maildir
 The maildir with the mailing list entries needs to be prepared.
 It is assumed to be at
-.Pa ~/Mail/gotmarc
+.Pa ~/Mail/smarc
 by default, but a different path can be used.
 .Ss 4. Generate the web archive
-.Xr gotmarc 1
+.Xr smarc 1
 can be finally used to generate the web archive.
 The first run may take a while, depending on the size of the maildir,
 while subsequent runs will be incremental and take less time.
 .Pp
-.Dl $ gotmarc -m path/to/maildir -o path/to/outdir
+.Dl $ smarc -m path/to/maildir -o path/to/outdir
 .Pp
 On multi-processor machines multiple processes may be used to save some
 time with the
-.Xr gotmarc 1 Fl j No flag.
+.Xr smarc 1 Fl j No flag.
 .Pp
 The generated files may be compressed to save bandwidth:
 .Pp
-.Dl $ gzip -krq /var/www/gotmarc </dev/null 2>/dev/null
+.Dl $ gzip -krq /var/www/smarc </dev/null 2>/dev/null
 .Ss 5. Set up the database for searching
 This is an suggested yet optional step.
 .Pp
 .Xr msearchd 8
 offers full text search capabilities using a sqlite3 database that has to
 be populated with
-.Xr gmimport 1 .
+.Xr smingest 1 .
 First, create a directory in the
 .Pa /var/www
 .Xr chroot 8
 jail:
 .Bd -literal -offset indent
 # mkdir -p /var/www/msearchd
-# chown gotmarc /var/www/msearchd
+# chown smarc /var/www/msearchd
 .Ed
 .Pp
 Then, populate the database with all emails in the maildir:
 .Bd -literal -offset indent
 $ sqlite3 /var/www/msearchd/mails.sqlite3 \e
-	</usr/local/share/examples/gotmarc/schema.sql
-$ mlist ~/Mail/gotmarc | gmimport /var/www/msearchd/mails.sqlite3
+	</usr/local/share/examples/smarc/schema.sql
+$ mlist ~/Mail/smarc | smingest /var/www/msearchd/mails.sqlite3
 .Ed
 .Pp
 At this point,
@@ -141,7 +141,7 @@ configuration is provided here for reference:
 .Bd -literal -offset indent
 server "marc.example.com" {
 	listen on * port 80
-	root "/gotmarc"
+	root "/smarc"
 	gzip-static
 
 	# leave out when not using msearchd(8)
@@ -156,9 +156,9 @@ New messages should be fetched periodically using tools like
 or
 .Xr mbsync 1 ,
 the database updated with
-.Xr gmimport 1
+.Xr smingest 1
 and the web archive refreshed using
-.Xr gotmarc 1 .
+.Xr smarc 1 .
 .Pp
 It is reccommended to create a script like the following and schedule
 its execution periodically with
@@ -168,9 +168,9 @@ its execution periodically with
 
 set -e
 fdm -l fetch
-minc ~/Mail/gotmarc | gmimport /var/www/msearchd/mails.sqlite3
-gotmarc
-gzip -krq /var/www/gotmarc/ </dev/null 2>/dev/null || true
+minc ~/Mail/smarc | smingest /var/www/msearchd/mails.sqlite3
+smarc
+gzip -krq /var/www/smarc/ </dev/null 2>/dev/null || true
 .Ed
 .Pp
 If
@@ -187,10 +187,10 @@ In that case simplify the
 .Xr minc 1
 invocation as:
 .Pp
-.Dl minc -q ~/Mail/gotmarc
+.Dl minc -q ~/Mail/smarc
 .Pp
 and don't call
-.Xr gmimport 1
+.Xr smingest 1
 at all.
 .Sh HANDLING MULTIPLE MAILING LISTS
 If the archive for multiple mailing lists needs to be served from the
@@ -202,21 +202,21 @@ handles only one database at a time, so multiple instances need to be
 run, each pointing at the database for only one mailing list.
 Different FastCGI socket path needs to be used per-instance.
 .Pp
-.Xr gotmarc 1
+.Xr smarc 1
 outdir, maildir and cachedir must be unique per-mailing list, i.e.\& the
 .Fl c , Fl m No and Fl o
 flag must always be provided.
 .Pp
 Very likely, each mailing list will needs its own set of templates, so
 those needs to be prepared and both
-.Xr gotmarc 1
+.Xr smarc 1
 and
 .Xr msearchd 8
 have to be pointed at the right template directory.
 .Sh SEE ALSO
-.Xr gmimport 1 ,
-.Xr gotmarc 1 ,
 .Xr minc 1 ,
+.Xr smarc 1 ,
+.Xr smingest 1 ,
 .Xr sqlite3 1 ,
 .Xr httpd 8 ,
 .Xr msearchd 8
