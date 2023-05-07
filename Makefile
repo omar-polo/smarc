@@ -89,6 +89,9 @@ release:
 	${MAKE} ${DISTNAME}.sha256.sig
 	sed -i -e '/^RELEASE=/s/yes/no/' configure
 
+verify:
+	signify -C -p ${PUBKEY} -x ${DISTNAME}.sha256.sig
+
 dist: ${DISTNAME}.sha256
 
 ${DISTNAME}.sha256.sig: ${DISTNAME}.sha256
@@ -108,4 +111,4 @@ ${DISTNAME}.tar.gz: ${DISTFILES}
 	cd .dist && tar czf ../$@ ${DISTNAME}
 	rm -rf .dist
 
-.PHONY: man release dist ${DISTNAME}.tar.gz
+.PHONY: man release verify dist ${DISTNAME}.tar.gz
