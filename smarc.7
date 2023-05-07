@@ -170,7 +170,7 @@ set -e
 fdm -l fetch
 minc ~/Mail/smarc | smingest /var/www/msearchd/mails.sqlite3
 smarc
-gzip -krq /var/www/smarc/ </dev/null 2>/dev/null || true
+yes | gzip -krq /var/www/smarc/ 2>/dev/null || true
 .Ed
 .Pp
 If
