@@ -13,11 +13,6 @@
   syntax.  Maybe turning also commit ids into links?
 
 
-- show the original file name in the list of attachments.
-
-  see for e.g. /mail/YSqwKz9bbMYM9fHW@benson.stsp.name.html
-
-
 - clarify date ranges
 
   Threads are sorted by their newest mail, so if an old thread gets a
