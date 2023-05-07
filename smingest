@@ -15,8 +15,7 @@ use File::Basename;
 die "usage: $0 dbpath\n" if @ARGV != 1;
 my $dbpath = shift @ARGV;
 
-open(my $sqlite, "|-", "/usr/local/bin/sqlite3", $dbpath)
-    or die "can't spawn sqlite3";
+open(my $sqlite, "|-", "sqlite3", $dbpath) or die "can't spawn sqlite3";
 
 if (`uname` =~ "OpenBSD") {
 	use OpenBSD::Pledge;
@@ -32,7 +31,7 @@ say $sqlite ".import --csv /dev/stdin email"
 while (<>) {
 	chomp;
 
-	open(my $fh, "-|", "/usr/local/bin/mshow", "-Atext/plain", "-NF", $_)
+	open(my $fh, "-|", "mshow", "-Atext/plain", "-NF", $_)
 	    or die "can't run mshow $_: $!";
 
 	my $f = $_;
