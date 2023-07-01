@@ -50,9 +50,7 @@ while (<>) {
 	$date //= time;
 	$from =~ s/ +<.*>//;
 
-	# leave open for the body
 	print $sqlite "\"$mid\",\"$from\",\"$date\",\"$subj\",\"";
-
 	while (<$fh>) {
 		s/"/""/g;
 		print $sqlite $_;
