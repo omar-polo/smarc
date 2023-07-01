@@ -34,7 +34,6 @@ while (<>) {
 	open(my $fh, "-|", "mshow", "-Atext/plain", "-NF", $_)
 	    or die "can't run mshow $_: $!";
 
-	my $f = $_;
 	my ($time, $id) = split /\./, basename $_;
 	my $mid = "$time.$id";
 	$mid =~ s/"/""/g;
