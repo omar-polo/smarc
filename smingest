@@ -57,7 +57,7 @@ while (<>) {
 		s/"/""/g;
 		print $sqlite $_;
 	}
-	say $sqlite '"';
+	print $sqlite "\"\r\n";
 
 	close $fh;
 }
