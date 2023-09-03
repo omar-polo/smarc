@@ -92,6 +92,11 @@ hr {
     margin: 0;
 }
 
+.thread .excerpt {
+    margin-left: 10px;
+    margin-top: 5px;
+}
+
 .thread a {
     text-decoration: none;
 }

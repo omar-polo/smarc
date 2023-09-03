@@ -75,7 +75,8 @@ server_open_db(struct env *env)
 		    sqlite3_errmsg(env->env_db));
 
 	loadstmt(env->env_db, &env->env_query,
-	    "select mid, \"from\", date, subj"
+	    "select mid, \"from\", date, subj,"
+	    "  snippet(email, 4, '<strong>', '</strong>', '...', 32)"
 	    " from email"
 	    " where email match ?"
 	    " order by rank, date"
@@ -299,7 +300,7 @@ server_handle(struct env *env, struct client *clt)
 	char		 dbuf[64];
 	char		 esc[QUERY_MAXLEN];
 	char		*query;
-	const char	*mid, *from, *subj;
+	const char	*mid, *from, *subj, *snip;
 	uint64_t	 date;
 	time_t		 d;
 	struct tm	*tm;
@@ -352,6 +353,7 @@ server_handle(struct env *env, struct client *clt)
 		from = sqlite3_column_text(env->env_query, 1);
 		date = sqlite3_column_int64(env->env_query, 2);
 		subj = sqlite3_column_text(env->env_query, 3);
+		snip = sqlite3_column_text(env->env_query, 4);
 
 		if ((sizeof(d) == 4) && date > UINT32_MAX) {
 			log_warnx("overflow of 32bit time value");
@@ -381,7 +383,9 @@ server_handle(struct env *env, struct client *clt)
 		    clt_putsan(clt, mid) == -1 ||
 		    clt_puts(clt, ".html'>") == -1 ||
 		    clt_putsan(clt, subj) == -1 ||
-		    clt_puts(clt, "</a></p></li>") == -1)
+		    clt_puts(clt, "</a></p><p class=excerpt>") == -1 ||
+		    clt_putmatch(clt, snip) == -1 ||
+		    clt_puts(clt, "</p></li>") == -1)
 			goto err;
 	}
 

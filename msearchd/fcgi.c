@@ -719,6 +719,64 @@ clt_putsan(struct client *clt, const char *s)
 }
 
 int
+clt_putmatch(struct client *clt, const char *s)
+{
+	int	r, instrong = 0, intag = 0, lastnl = 0;
+
+	if (s == NULL)
+		return (0);
+
+	for (; *s; ++s) {
+		switch (*s) {
+		case '<':
+			if (!instrong && !strncmp(s, "<strong>", 8)) {
+				instrong = intag = 1;
+				r = clt_putc(clt, *s);
+			} else if (instrong && !strncmp(s, "</strong>", 9)) {
+				instrong = 0;
+				intag = 1;
+				r = clt_putc(clt, *s);
+			} else
+				r = clt_puts(clt, "&lt;");
+			break;
+		case '>':
+			if (intag) {
+				intag = 0;
+				r = clt_putc(clt, *s);
+			} else
+				r = clt_puts(clt, "&gt;");
+			break;
+		case '&':
+			r = clt_puts(clt, "&amp;");
+			break;
+		case '"':
+			r = clt_puts(clt, "&quot;");
+			break;
+		case '\'':
+			r = clt_puts(clt, "&apos;");
+			break;
+		case '\n':
+			if (lastnl)
+				break;
+			r = clt_puts(clt, "<br />");
+			lastnl = 1;
+			break;
+		default:
+			lastnl = 0;
+			r = clt_putc(clt, *s);
+			break;
+		}
+
+		if (r == -1)
+			return (-1);
+	}
+
+	if (instrong)		/* something went wrong... */
+		return clt_puts(clt, "</strong>");
+	return (0);
+}
+
+int
 clt_printf(struct client *clt, const char *fmt, ...)
 {
 	struct fcgi		*fcgi = clt->clt_fcgi;

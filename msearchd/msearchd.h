@@ -99,6 +99,7 @@ void	fcgi_free(struct fcgi *);
 int	clt_putc(struct client *, char);
 int	clt_puts(struct client *, const char *);
 int	clt_putsan(struct client *, const char *);
+int	clt_putmatch(struct client *, const char *);
 int	clt_write_bufferevent(struct client *, struct bufferevent *);
 int	clt_flush(struct client *);
 int	clt_write(struct client *, const uint8_t *, size_t);
