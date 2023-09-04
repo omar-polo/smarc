@@ -66,9 +66,9 @@ Then copy the CSS file, optionally tweaking it.
 .Pp
 .Dl $ cp /usr/local/share/examples/smarc/style.css /var/www/smarc
 .Pp
-Other eventual assets
+Copy also other eventual assets
 .Pq e.g.\& logo images
-need to be copied here as well.
+here as well.
 .Ss 2. Customize the templates
 The default templates are installed at
 .Pa /etc/smarc .
@@ -83,7 +83,7 @@ needs to be deleted and the web archive generated again.
 .Xr msearchd 8
 has to be stopped and restarted as well.
 .Ss 3. Prepare the maildir
-The maildir with the mailing list entries needs to be prepared.
+The maildir with the mailing list entries needs to be populated.
 It is assumed to be at
 .Pa ~/Mail/smarc
 by default, but a different path can be used.
@@ -95,7 +95,7 @@ while subsequent runs will be incremental and take less time.
 .Pp
 .Dl $ smarc -m path/to/maildir -o path/to/outdir
 .Pp
-On multi-processor machines multiple processes may be used to save some
+On multi-processor machines multiple jobs may be used to save some
 time with the
 .Xr smarc 1 Fl j No flag.
 .Pp
@@ -103,7 +103,7 @@ The generated files may be compressed to save bandwidth:
 .Pp
 .Dl $ gzip -krq /var/www/smarc </dev/null 2>/dev/null
 .Ss 5. Set up the database for searching
-This is an suggested yet optional step.
+This is a suggested yet optional step.
 .Pp
 .Xr msearchd 8
 offers full text search capabilities using a sqlite3 database that has to
