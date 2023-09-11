@@ -1,2 +1,8 @@
+* smarc 0.2; 2023-09-11
+- smingest: terminate CSV records with CRLF
+- msearchd(8): fixed database path typo in the FILES section
+- msearchd: show excerpt of search results
+- minor improvements to smarc(7)
+
 * smarc 0.1; 2023-05-07
 - rename from gotmarc and initial release
