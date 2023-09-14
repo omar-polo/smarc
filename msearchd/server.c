@@ -159,8 +159,15 @@ server_shutdown(struct env *env)
 int
 server_reply(struct client *clt, int status, const char *arg)
 {
+	const char	*cps;
+
 	if (status != 200 &&
 	    clt_printf(clt, "Status: %d\r\n", status) == -1)
+		return (-1);
+
+	cps = "Content-Security-Policy: default-src 'self'; "
+	    "script-src 'none'; object-src 'none';\r\n";
+	if (clt_puts(clt, cps) == -1)
 		return (-1);
 
 	if (status == 302) {
