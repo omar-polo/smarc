@@ -1,5 +1,5 @@
-NEXTV =		03
-DISTFILES =	Makefile smarc-01.pub smarc-02.pub smarc-03.pub
+NEXTV =		04
+DISTFILES =	Makefile smarc-01.pub smarc-02.pub smarc-03.pub smarc-04.pub
 
 all:
 	false
