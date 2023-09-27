@@ -1,3 +1,6 @@
+* smarc 0.3; 2023-09-27
+- msearchd: add a strict Content-Security-Policy
+
 * smarc 0.2; 2023-09-11
 - smingest: terminate CSV records with CRLF
 - msearchd(8): fixed database path typo in the FILES section
