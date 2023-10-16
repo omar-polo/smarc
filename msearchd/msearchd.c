@@ -23,6 +23,7 @@
 #include <syslog.h>
 #include <unistd.h>
 
+#include "log.h"
 #include "msearchd.h"
 
 #ifndef MSEARCHD_DB
@@ -52,33 +53,6 @@ const char	*tmpl_head;
 const char	*tmpl_search;
 const char	*tmpl_search_header;
 const char	*tmpl_foot;
-
-__dead void	srch_syslog_fatal(int, const char *, ...);
-__dead void	srch_syslog_fatalx(int, const char *, ...);
-void		srch_syslog_warn(const char *, ...);
-void		srch_syslog_warnx(const char *, ...);
-void		srch_syslog_info(const char *, ...);
-void		srch_syslog_debug(const char *, ...);
-
-const struct logger syslogger = {
-	.fatal =	&srch_syslog_fatal,
-	.fatalx =	&srch_syslog_fatalx,
-	.warn =		&srch_syslog_warn,
-	.warnx =	&srch_syslog_warnx,
-	.info =		&srch_syslog_info,
-	.debug =	&srch_syslog_debug,
-};
-
-const struct logger dbglogger = {
-	.fatal =	&err,
-	.fatalx =	&errx,
-	.warn =		&warn,
-	.warnx =	&warnx,
-	.info =		&warnx,
-	.debug =	&warnx,
-};
-
-const struct logger *logger = &dbglogger;
 
 static void
 sighdlr(int sig)
@@ -332,8 +306,7 @@ main(int argc, char **argv)
 	if (root == NULL)
 		root = pw->pw_dir;
 
-	if (!debug)
-		logger = &syslogger;
+	log_init(debug, LOG_DAEMON);
 
 	if (!debug && !server && daemon(1, 0) == -1)
 		fatal("daemon");
@@ -419,103 +392,4 @@ main(int argc, char **argv)
 	}
 
 	return (1);
-}
-
-__dead void
-srch_syslog_fatal(int eval, const char *fmt, ...)
-{
-	static char	 s[BUFSIZ];
-	va_list		 ap;
-	int		 r, save_errno;
-
-	save_errno = errno;
-
-	va_start(ap, fmt);
-	r = vsnprintf(s, sizeof(s), fmt, ap);
-	va_end(ap);
-
-	errno = save_errno;
-
-	if (r > 0 && (size_t)r <= sizeof(s))
-		syslog(LOG_DAEMON|LOG_CRIT, "%s: %s", s, strerror(errno));
-
-	exit(eval);
-}
-
-__dead void
-srch_syslog_fatalx(int eval, const char *fmt, ...)
-{
-	va_list		 ap;
-
-	va_start(ap, fmt);
-	vsyslog(LOG_DAEMON|LOG_CRIT, fmt, ap);
-	va_end(ap);
-
-	exit(eval);
-}
-
-void
-srch_syslog_warn(const char *fmt, ...)
-{
-	static char	 s[BUFSIZ];
-	va_list		 ap;
-	int		 r, save_errno;
-
-	save_errno = errno;
-
-	va_start(ap, fmt);
-	r = vsnprintf(s, sizeof(s), fmt, ap);
-	va_end(ap);
-
-	errno = save_errno;
-
-	if (r > 0 && (size_t)r < sizeof(s))
-		syslog(LOG_DAEMON|LOG_ERR, "%s: %s", s, strerror(errno));
-
-	errno = save_errno;
-}
-
-void
-srch_syslog_warnx(const char *fmt, ...)
-{
-	va_list		 ap;
-	int		 save_errno;
-
-	save_errno = errno;
-	va_start(ap, fmt);
-	vsyslog(LOG_DAEMON|LOG_ERR, fmt, ap);
-	va_end(ap);
-	errno = save_errno;
-}
-
-void
-srch_syslog_info(const char *fmt, ...)
-{
-	va_list		 ap;
-	int		 save_errno;
-
-	if (verbose < 1)
-		return;
-
-	save_errno = errno;
-	va_start(ap, fmt);
-	vsyslog(LOG_DAEMON|LOG_INFO, fmt, ap);
-	va_end(ap);
-	errno = save_errno;
-}
-
-void
-srch_syslog_debug(const char *fmt, ...)
-{
-	va_list		 ap;
-	int		 save_errno;
-
-	if (verbose < 2)
-		return;
-
-	save_errno = errno;
-	va_start(ap, fmt);
-	vsyslog(LOG_DAEMON|LOG_DEBUG, fmt, ap);
-	va_end(ap);
-	errno = save_errno;
 }

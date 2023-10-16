@@ -15,6 +15,7 @@
 
 #include <sqlite3.h>
 
+#include "log.h"
 #include "msearchd.h"
 
 char		dbpath[PATH_MAX];

@@ -19,6 +19,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "log.h"
 #include "msearchd.h"
 
 #define MIN(a, b)	((a) < (b) ? (a) : (b))

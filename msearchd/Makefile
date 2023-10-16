@@ -2,7 +2,7 @@ include config.mk
 include ../config.mk
 
 PROG =		msearchd
-SRCS =		msearchd.c fcgi.c server.c
+SRCS =		msearchd.c fcgi.c log.c server.c
 MAN =		msearchd.8
 
 OBJS =		${SRCS:.c=.o} ${COMPATS:.c=.o}
@@ -48,7 +48,8 @@ DEFS =	-DSYSCONFDIR="\"${REALSYSCONFDIR}\"" \
 
 # -- maintainer targets --
 
-DISTFILES =	Makefile configure ${SRCS} msearchd.h msearchd.8 schema.sql
+DISTFILES =	Makefile configure ${SRCS} log.h msearchd.h \
+		msearchd.8 schema.sql
 
 dist:
 	mkdir -p ${DESTDIR}/

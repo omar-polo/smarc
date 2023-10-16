@@ -18,25 +18,6 @@ enum {
 	METHOD_POST,
 };
 
-#define ATTR_PRINTF(A, B) __attribute__((__format__ (printf, A, B)))
-
-struct logger {
-	__dead void (*fatal)(int, const char *, ...)	ATTR_PRINTF(2, 3);
-	__dead void (*fatalx)(int, const char *, ...)	ATTR_PRINTF(2, 3);
-	void (*warn)(const char *, ...)			ATTR_PRINTF(1, 2);
-	void (*warnx)(const char *, ...)		ATTR_PRINTF(1, 2);
-	void (*info)(const char *, ...)			ATTR_PRINTF(1, 2);
-	void (*debug)(const char *, ...)		ATTR_PRINTF(1, 2);
-};
-
-extern const struct logger *logger;
-#define fatal(...)	logger->fatal(1, __VA_ARGS__)
-#define fatalx(...)	logger->fatalx(1, __VA_ARGS__)
-#define log_warn(...)	logger->warn(__VA_ARGS__)
-#define log_warnx(...)	logger->warnx(__VA_ARGS__)
-#define log_info(...)	logger->info(__VA_ARGS__)
-#define log_debug(...)	logger->debug(__VA_ARGS__)
-
 #ifdef DEBUG
 #define DPRINTF		log_debug
 #else
