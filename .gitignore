@@ -1,5 +1,6 @@
 **/*.[od]
 **/*.sha256
+**/*.sig
 **/*.tar.gz
 **/config.h
 **/config.mk
