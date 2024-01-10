@@ -2,7 +2,7 @@ include config.mk
 
 # -- build-related variables --
 
-VERSION =	0.4
+VERSION =	0.5
 DISTNAME =	smarc-${VERSION}
 
 # -- public targets --
