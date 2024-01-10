@@ -1,3 +1,7 @@
+* smarc 0.4; 2024-01-10
+- move the search link to a template
+- switch log.c implementation
+
 * smarc 0.3; 2023-09-27
 - msearchd: add a strict Content-Security-Policy
 
