@@ -1,5 +1,6 @@
 DISTFILES =	Makefile foot.html head.html index-header.html \
-		logo-small.html search-header.html search.html
+		logo-small.html search-header.html search-link.html \
+		search.html
 
 all:
 	false

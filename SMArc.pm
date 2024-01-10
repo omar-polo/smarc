@@ -76,6 +76,7 @@ my $hdr = readall "$templates/head.html";
 my $foot = readall "$templates/foot.html";
 my $idxhdr = readall "$templates/index-header.html";
 my $search = readall "$templates/search.html";
+my $search_link = readall "$templates/search-link.html";
 
 sub initpage {
 	my ($fh, $title) = @_;
@@ -115,7 +116,7 @@ sub thread_header {
 	print $fh "<a href='/'>Index</a>";
 	print $fh " | <a href='/thread/$enctid.html#$encmid'>Thread</a>"
 	    if defined $enctid;
-	print $fh " | <a href='/search'>Search</a>";
+	print $fh $search_link;
 	print $fh "</p>\n";
 
 	say $fh "<dl>";
