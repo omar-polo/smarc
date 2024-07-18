@@ -14,8 +14,8 @@ How it works
 ------------
 
 smarc(1) incrementally generate a set of static files from a maildir,
-smingest(1) and msearchd(8) are used to populate an sqlite3 database to
-provide a web-based full text search on all the mails.
+smingest(1) to populate an sqlite3 database to provide a search
+facility for the msearchd(8) web interface.
 
 smarc(7) documents the steps needed for a first setup, how to operate it
 and tips for maintaining multiple archives.
