@@ -58,5 +58,11 @@ set +e
 
 export PATH="$libexec:$PATH"
 
+prune() {
+	# Prune unresolved messages so that later in SMArc::parse
+	# we can assume all the lines are well-formed.
+	egrep -v '^ *<'
+}
+
 fmt='%i-%R %16D<%64f>%128S'
-mlist "${MDIR}" | mthread -r | mscan -f "$fmt" | pe | mkindex
+mlist "${MDIR}" | mthread -r | prune | mscan -f "$fmt" | pe | mkindex
