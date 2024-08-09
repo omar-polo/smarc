@@ -162,7 +162,7 @@ if (`uname` =~ "OpenBSD") {
 
 	unveil($outdir, "rwc") or die "unveil $outdir: $!";
 
-	# can't use tmppath because File::Temp checks wether /tmp exists.
+	# can't use tmppath because File::Temp checks whether /tmp exists.
 	unveil("/tmp", "rwc") or die "unveil /tmp: $!";
 
 	# fattr for File::Temp
