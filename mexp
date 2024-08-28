@@ -51,11 +51,12 @@ sub humanize {
 	my @scale =   (1024*1024*1024, 1024*1024, 1024, 1);
 
 	for (my $i = 0; $i < @scale; $i++) {
-		if ($scale[$i] < $number) {
+		if ($scale[$i] <= $number) {
 			my $r = $number / $scale[$i];
 			return sprintf "%.0f%s", $r, $units[$i];
 		}
 	}
+	return "0B"
 }
 
 sub export_one {
